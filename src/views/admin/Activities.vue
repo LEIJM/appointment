@@ -19,9 +19,12 @@
     <div class="container" style="padding-bottom: 80px;">
       <!-- 页面标题 -->
       <div class="festive-bg fade-in-up" style="margin: 1rem 0; text-align: center;">
-        <h1 style="color: var(--primary-red); font-size: 1.5rem; margin-bottom: 0.5rem;">
-          活动管理
-        </h1>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+          <h1 style="color: var(--primary-red); font-size: 1.5rem; margin-bottom: 0.5rem;">
+            活动管理
+          </h1>
+          <span class="activity-count" style="color: var(--gray-600); font-size: 0.9rem;">共 {{ filteredActivities.length }} 个活动</span>
+        </div>
         <p style="color: var(--gray-600); font-size: 0.9rem;">
           管理平台所有相亲活动 🎉
         </p>
@@ -35,20 +38,23 @@
               v-model="searchQuery" 
               type="text" 
               class="form-input" 
-              placeholder="搜索活动标题或描述..."
-              @input="searchActivities"
+              placeholder="搜索活动标题、描述、地点或备注..."
+              @keyup.enter="searchActivities"
             >
-            <button @click="searchActivities" class="btn btn-primary">搜索</button>
+            <button @click="searchActivities" class="btn btn-primary">🔍 搜索</button>
+            <button @click="clearFilters" class="btn btn-outline" v-if="searchQuery || filterStatus || filterType">
+              🔄 清除筛选
+            </button>
           </div>
           <div class="filter-section">
-            <select v-model="filterStatus" @change="filterActivities" class="form-input">
+            <select v-model="filterStatus" @change="filterActivities" class="form-input" title="按活动状态筛选">
               <option value="">全部状态</option>
               <option value="upcoming">即将开始</option>
               <option value="ongoing">进行中</option>
               <option value="completed">已结束</option>
               <option value="cancelled">已取消</option>
             </select>
-            <select v-model="filterType" @change="filterActivities" class="form-input">
+            <select v-model="filterType" @change="filterActivities" class="form-input" title="按活动类型筛选">
               <option value="">全部类型</option>
               <option value="speed_dating">速配活动</option>
               <option value="group_activity">团体活动</option>
@@ -67,8 +73,14 @@
         </div>
         
         <div v-if="loading" style="text-align: center; padding: 2rem;">
-          <div style="font-size: 2rem; margin-bottom: 0.5rem;">⏳</div>
-          <div>加载中...</div>
+          <div class="loading-spinner"></div>
+          <p>正在加载活动数据...</p>
+        </div>
+        
+        <div v-else-if="filteredActivities.length === 0" class="no-results" style="text-align: center; padding: 2rem; color: var(--gray-600);">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+          <h3>没有找到匹配的活动</h3>
+          <p>尝试调整搜索条件或创建新活动</p>
         </div>
         
         <div v-else-if="filteredActivities.length === 0" style="text-align: center; padding: 2rem; color: var(--gray-500);">
@@ -76,7 +88,7 @@
         </div>
         
         <div v-else class="activity-list">
-          <div v-for="activity in paginatedActivities" :key="activity.id" class="activity-item">
+          <div v-for="activity in paginatedActivities" :key="activity.id" class="activity-item" :class="{ 'activity-cancelled': activity.status === 'cancelled' }">
             <div class="activity-image" v-if="activity.image">
               <img :src="activity.image" :alt="activity.title" />
             </div>
@@ -92,6 +104,10 @@
                 <div class="activity-detail">
                   <span>📅</span>
                   {{ formatDate(activity.date) }}
+                </div>
+                <div class="activity-detail">
+                  <span>⏰</span>
+                  截止: {{ formatDate(activity.registration_deadline) }}
                 </div>
                 <div class="activity-detail">
                   <span>📍</span>
@@ -112,15 +128,18 @@
               </div>
             </div>
             <div class="activity-actions">
-              <button @click="viewActivity(activity)" class="btn btn-outline btn-sm">查看</button>
-              <button @click="editActivity(activity)" class="btn btn-primary btn-sm">编辑</button>
-              <button 
-                @click="toggleActivityStatus(activity)" 
-                :class="['btn btn-sm', activity.status === 'cancelled' ? 'btn-success' : 'btn-warning']"
-              >
-                {{ activity.status === 'cancelled' ? '恢复活动' : '取消活动' }}
-              </button>
-              <button @click="deleteActivity(activity)" class="btn btn-danger btn-sm">删除</button>
+              <button @click="viewActivity(activity)" class="btn btn-sm btn-outline" title="查看详情">
+              👁️ 查看
+            </button>
+            <button @click="editActivity(activity)" class="btn btn-sm btn-outline" title="编辑活动">
+              ✏️ 编辑
+            </button>
+            <button @click="toggleActivityStatus(activity)" class="btn btn-sm btn-outline" title="切换状态">
+              {{ activity.status === 'cancelled' ? '✅ 恢复' : '❌ 取消' }}
+            </button>
+            <button @click="deleteActivity(activity)" class="btn btn-sm btn-danger" title="删除活动" @mouseenter="$event.target.style.backgroundColor='#c0392b'" @mouseleave="$event.target.style.backgroundColor=''">
+              🗑️ 删除
+            </button>
             </div>
           </div>
         </div>
@@ -148,21 +167,21 @@
       </div>
     </div>
 
-    <!-- 底部导航 -->
+    <!-- 底部导航（统一样式与高亮逻辑） -->
     <div class="bottom-nav">
-      <router-link to="/admin" class="bottom-nav-item">
+      <router-link to="/admin" class="bottom-nav-item" title="返回概览">
         <span style="font-size: 1.2rem;">📊</span>
         <span>概览</span>
       </router-link>
-      <router-link to="/admin/users" class="bottom-nav-item">
+      <router-link to="/admin/users" class="bottom-nav-item" title="用户管理">
         <span style="font-size: 1.2rem;">👥</span>
         <span>用户</span>
-      </router-link>
-      <router-link to="/admin/activities" class="bottom-nav-item active">
+      </router-link>      
+      <router-link to="/admin/activities" class="bottom-nav-item" title="活动管理">
         <span style="font-size: 1.2rem;">🎉</span>
         <span>活动</span>
       </router-link>
-      <div class="bottom-nav-item" @click="logout">
+      <div class="bottom-nav-item" @click="logout" title="退出登录">
         <span style="font-size: 1.2rem;">🚪</span>
         <span>退出</span>
       </div>
@@ -172,7 +191,7 @@
     <div v-if="showCreateModal" class="modal-overlay" @click="closeCreateModal">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h3>创建新活动</h3>
+          <h3>{{ isEditing ? '编辑活动' : '创建新活动' }}</h3>
           <button @click="closeCreateModal" class="modal-close">×</button>
         </div>
         <div class="modal-body">
@@ -188,6 +207,10 @@
             <div class="form-group">
               <label class="form-label">活动日期</label>
               <input v-model="newActivity.date" type="datetime-local" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">报名截止时间</label>
+              <input v-model="newActivity.registration_deadline" type="datetime-local" class="form-input" required>
             </div>
             <div class="form-group">
               <label class="form-label">活动地点</label>
@@ -239,12 +262,27 @@
                 </div>
               </div>
             </div>
+            <!-- 活动备注 -->
+            <div class="form-group">
+              <label for="notes">活动备注</label>
+              <textarea
+                id="notes"
+                v-model="newActivity.notes"
+                placeholder="添加活动备注信息..."
+                rows="3"
+                class="form-input"
+                maxlength="500"
+              ></textarea>
+              <small style="color: var(--gray-600); font-size: 0.8rem;">
+                {{ newActivity.notes?.length || 0 }}/500 字符
+              </small>
+            </div>
           </form>
         </div>
         <div class="modal-footer">
           <button @click="closeCreateModal" class="btn btn-outline">取消</button>
           <button @click="createActivity" class="btn btn-primary" :disabled="creating">
-            {{ creating ? '创建中...' : '创建活动' }}
+            {{ creating ? (isEditing ? '更新中...' : '创建中...') : (isEditing ? '更新活动' : '创建活动') }}
           </button>
         </div>
       </div>
@@ -261,40 +299,183 @@
           <div class="activity-detail-section">
             <h4>基本信息</h4>
             <div class="detail-row">
-              <span class="detail-label">标题:</span>
+              <span class="detail-label">活动标题</span>
               <span class="detail-value">{{ selectedActivity.title }}</span>
             </div>
             <div class="detail-row">
-              <span class="detail-label">描述:</span>
-              <span class="detail-value">{{ selectedActivity.description }}</span>
+              <span class="detail-label">活动类型</span>
+              <span class="detail-value">{{ getTypeText(selectedActivity.type) }}</span>
             </div>
             <div class="detail-row">
-              <span class="detail-label">日期:</span>
+              <span class="detail-label">活动状态</span>
+              <span class="detail-value">
+                <span :class="['activity-status', selectedActivity.status]">{{ getStatusText(selectedActivity.status) }}</span>
+              </span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">活动日期</span>
               <span class="detail-value">{{ formatDate(selectedActivity.date) }}</span>
             </div>
             <div class="detail-row">
-              <span class="detail-label">地点:</span>
+              <span class="detail-label">报名截止</span>
+              <span class="detail-value">{{ formatDate(selectedActivity.registration_deadline) }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">活动地点</span>
               <span class="detail-value">{{ selectedActivity.location }}</span>
             </div>
           </div>
+          
           <div class="activity-detail-section">
             <h4>参与信息</h4>
             <div class="detail-row">
-              <span class="detail-label">当前参与人数:</span>
-              <span class="detail-value">{{ selectedActivity.current_participants }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="detail-label">最大参与人数:</span>
-              <span class="detail-value">{{ selectedActivity.max_participants }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="detail-label">价格:</span>
+              <span class="detail-label">价格</span>
               <span class="detail-value">¥{{ selectedActivity.price }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">最大人数</span>
+              <span class="detail-value">{{ selectedActivity.max_participants }}人</span>
+            </div>
+            <div class="detail-row" v-if="selectedActivity.current_participants !== undefined">
+              <span class="detail-label">当前报名</span>
+              <span class="detail-value">{{ selectedActivity.current_participants }}人</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">年龄范围</span>
+              <span class="detail-value">{{ selectedActivity.age_range || '不限' }}</span>
+            </div>
+          </div>
+          
+          <div class="activity-detail-section">
+            <h4>活动描述</h4>
+            <div class="detail-row">
+              <span class="detail-value">{{ selectedActivity.description }}</span>
+            </div>
+          </div>
+          
+          <div class="activity-detail-section" v-if="selectedActivity.notes">
+            <h4>活动备注</h4>
+            <div class="detail-row">
+              <span class="detail-value">{{ selectedActivity.notes }}</span>
+            </div>
+          </div>
+
+          <div class="activity-detail-section">
+            <h4>报名用户</h4>
+            <div v-if="selectedRegistrations.length === 0" class="detail-row">
+              <span class="detail-value" style="color: var(--gray-500)">暂无报名记录</span>
+            </div>
+            <div v-else>
+              <div v-for="reg in selectedRegistrations" :key="reg.id" class="detail-row">
+                <span class="detail-label">{{ reg.nickname || reg.username }}</span>
+                <span class="detail-value">{{ reg.gender || '-' }} · {{ reg.age || '-' }}岁</span>
+              </div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button @click="closeActivityModal" class="btn btn-outline">关闭</button>
+          <button @click="closeActivityModal" class="btn btn-outline" title="关闭 (Esc)">关闭</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 创建活动模态框 -->
+    <div v-if="showCreateModal" class="modal-overlay" @click="closeCreateModal">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h3>{{ isEditing ? '编辑活动' : '创建新活动' }}</h3>
+          <button @click="closeCreateModal" class="modal-close">×</button>
+        </div>
+        <div class="modal-body">
+          <form @submit.prevent="createActivity">
+            <div class="form-group">
+              <label class="form-label">活动标题</label>
+              <input v-model="newActivity.title" type="text" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">活动描述</label>
+              <textarea v-model="newActivity.description" class="form-input" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">活动日期</label>
+              <input v-model="newActivity.date" type="datetime-local" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">报名截止时间</label>
+              <input v-model="newActivity.registration_deadline" type="datetime-local" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">活动地点</label>
+              <input v-model="newActivity.location" type="text" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">活动类型</label>
+              <select v-model="newActivity.type" class="form-input" required>
+                <option value="speed_dating">速配活动</option>
+                <option value="group_activity">团体活动</option>
+                <option value="themed_party">主题派对</option>
+                <option value="outdoor_activity">户外活动</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">价格 (元)</label>
+              <input v-model.number="newActivity.price" type="number" class="form-input" min="0" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">最大参与人数</label>
+              <input v-model.number="newActivity.max_participants" type="number" class="form-input" min="1" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">年龄范围</label>
+              <input v-model="newActivity.age_range" type="text" class="form-input" placeholder="如：25-35岁">
+            </div>
+            <div class="form-group">
+              <label class="form-label">活动图片</label>
+              <div class="image-upload-area" @drop="handleImageDrop" @dragover.prevent @dragenter.prevent>
+                <input 
+                  ref="imageInput" 
+                  type="file" 
+                  multiple 
+                  accept="image/*" 
+                  @change="handleImageSelect"
+                  style="display: none"
+                >
+                <div class="upload-placeholder" @click="triggerImageUpload">
+                  <div style="font-size: 2rem; margin-bottom: 0.5rem;">📷</div>
+                  <div>点击上传图片或拖拽图片到此处</div>
+                  <div style="font-size: 0.8rem; color: var(--gray-500); margin-top: 0.25rem;">支持多张图片上传</div>
+                </div>
+              </div>
+              <div v-if="selectedImages.length > 0" class="selected-images">
+                <div v-for="(image, index) in selectedImages" :key="index" class="selected-image-item">
+                  <img :src="image.preview" :alt="`活动图片 ${index + 1}`" class="preview-image">
+                  <button @click="removeImage(index)" class="remove-image-btn">×</button>
+                  <div class="image-name">{{ image.file.name }}</div>
+                </div>
+              </div>
+            </div>
+            <!-- 活动备注 -->
+            <div class="form-group">
+              <label for="notes">活动备注</label>
+              <textarea
+                id="notes"
+                v-model="newActivity.notes"
+                placeholder="添加活动备注信息..."
+                rows="3"
+                class="form-input"
+                maxlength="500"
+              ></textarea>
+              <small style="color: var(--gray-600); font-size: 0.8rem;">
+                {{ newActivity.notes?.length || 0 }}/500 字符
+              </small>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button @click="closeCreateModal" class="btn btn-outline">取消</button>
+          <button @click="createActivity" class="btn btn-primary" :disabled="creating">
+            {{ creating ? (isEditing ? '更新中...' : '创建中...') : (isEditing ? '更新活动' : '创建活动') }}
+          </button>
         </div>
       </div>
     </div>
@@ -318,7 +499,9 @@ const itemsPerPage = 10
 const showCreateModal = ref(false)
 const showActivityModal = ref(false)
 const selectedActivity = ref(null)
+const selectedRegistrations = ref([])
 const creating = ref(false)
+const isEditing = ref(false)
 const selectedImages = ref([])
 const imageInput = ref(null)
 
@@ -326,12 +509,14 @@ const newActivity = ref({
   title: '',
   description: '',
   date: '',
+  registration_deadline: '',
   location: '',
   type: 'speed_dating',
   price: 0,
   max_participants: 20,
   age_range: '',
-  image: ''
+  image: '',
+  notes: ''
 })
 
 const paginatedActivities = computed(() => {
@@ -351,8 +536,31 @@ const fetchActivities = async () => {
     const response = await axios.get('http://localhost:3001/api/admin/activities', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
-    activities.value = response.data
-    filteredActivities.value = response.data
+    
+    // 确保数据完整性
+    activities.value = response.data.map(activity => {
+      // 后端返回的是 a.* + photos + status（字符串）
+      // 统一映射到当前前端所需的字段命名
+      return {
+        id: activity.id,
+        title: activity.title,
+        description: activity.details || '',
+        date: activity.date,
+        registration_deadline: activity.registration_deadline,
+        location: activity.location || null,
+        type: activity.type || 'group_activity',
+        price: activity.price ?? 0,
+        max_participants: activity.max_participants ?? 0,
+        age_range: activity.age_range || '',
+        image: activity.image || '',
+        photos: activity.photos || '',
+        current_participants: activity.current_participants ?? 0,
+        notes: activity.notes || '',
+        status: activity.status
+      }
+    })
+    
+    filteredActivities.value = activities.value
   } catch (error) {
     console.error('Failed to fetch activities:', error)
     if (error.response?.status === 401) {
@@ -371,7 +579,9 @@ const filterActivities = () => {
   filteredActivities.value = activities.value.filter(activity => {
     const matchesSearch = !searchQuery.value || 
       activity.title?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      activity.description?.toLowerCase().includes(searchQuery.value.toLowerCase())
+      activity.description?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      activity.location?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      (activity.notes && activity.notes.toLowerCase().includes(searchQuery.value.toLowerCase()))
     
     const matchesStatus = !filterStatus.value || activity.status === filterStatus.value
     const matchesType = !filterType.value || activity.type === filterType.value
@@ -382,7 +592,30 @@ const filterActivities = () => {
 }
 
 const createActivity = async () => {
+  // 表单验证
+  if (!newActivity.value.title || !newActivity.value.description || !newActivity.value.date || 
+      !newActivity.value.registration_deadline || !newActivity.value.location) {
+    alert('请填写所有必填字段')
+    return
+  }
+  
+  if (new Date(newActivity.value.registration_deadline) >= new Date(newActivity.value.date)) {
+    alert('报名截止时间必须早于活动开始时间')
+    return
+  }
+  
+  if (newActivity.value.max_participants < 1) {
+    alert('最大参与人数必须大于0')
+    return
+  }
+  
+  if (newActivity.value.price < 0) {
+    alert('价格不能为负数')
+    return
+  }
+  
   creating.value = true
+  
   try {
     const token = localStorage.getItem('token')
     
@@ -401,32 +634,72 @@ const createActivity = async () => {
       formData.append('images', image.file)
     })
     
-    await axios.post('http://localhost:3001/api/admin/activities/create', formData, {
-      headers: { 
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data'
-      }
-    })
+    // Use different endpoint for create vs update
+    if (isEditing.value && selectedActivity.value) {
+      // Update existing activity
+      await axios.put(`http://localhost:3001/api/admin/activities/${selectedActivity.value.id}`, formData, {
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      alert('活动更新成功！')
+    } else {
+      // Create new activity
+      await axios.post('http://localhost:3001/api/admin/activities/create', formData, {
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      alert('活动创建成功！')
+    }
     
     await fetchActivities()
     closeCreateModal()
     
   } catch (error) {
     console.error('Failed to create activity:', error)
-    alert('创建活动失败，请重试')
+    alert(isEditing.value ? '更新活动失败，请重试' : '创建活动失败，请重试')
   } finally {
     creating.value = false
   }
 }
 
-const viewActivity = (activity) => {
+const viewActivity = async (activity) => {
   selectedActivity.value = activity
   showActivityModal.value = true
+  selectedRegistrations.value = []
+  try {
+    const token = localStorage.getItem('token')
+    const res = await axios.get(`http://localhost:3001/api/activities/${activity.id}/registrations`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+    selectedRegistrations.value = res.data || []
+    // 同步更新当前报名人数，避免列表数据延迟导致弹窗显示为0
+    selectedActivity.value.current_participants = selectedRegistrations.value.length
+  } catch (e) {
+    console.error('Failed to fetch registrations:', e)
+  }
 }
 
 const editActivity = (activity) => {
-  // Navigate to activity edit page or open edit modal
-  console.log('Edit activity:', activity)
+  // Open edit modal with activity data
+  selectedActivity.value = activity
+  newActivity.value = {
+    title: activity.title,
+    description: activity.description,
+    date: activity.date,
+    registration_deadline: activity.registration_deadline,
+    location: activity.location,
+    type: activity.type,
+    price: activity.price,
+    max_participants: activity.max_participants,
+    age_range: activity.age_range,
+    notes: activity.notes || ''
+  }
+  showCreateModal.value = true
+  isEditing.value = true
 }
 
 const toggleActivityStatus = async (activity) => {
@@ -449,9 +722,33 @@ const toggleActivityStatus = async (activity) => {
 }
 
 const deleteActivity = async (activity) => {
-  if (!confirm(`确定要删除活动 "${activity.title}" 吗？此操作不可恢复。`)) {
-    return
-  }
+  const confirmed = await new Promise((resolve) => {
+    const modal = document.createElement('div')
+    modal.innerHTML = `
+      <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 2rem; border-radius: 8px; max-width: 400px; text-align: center;">
+          <h3 style="color: #e74c3c; margin-bottom: 1rem;">⚠️ 确认删除</h3>
+          <p style="margin-bottom: 1.5rem;">确定要删除活动 "${activity.title}" 吗？此操作无法撤销。</p>
+          <div style="display: flex; gap: 1rem; justify-content: center;">
+            <button id="confirmBtn" style="background: #e74c3c; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">确认删除</button>
+            <button id="cancelBtn" style="background: #95a5a6; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">取消</button>
+          </div>
+        </div>
+      </div>
+    `
+    document.body.appendChild(modal)
+    
+    document.getElementById('confirmBtn').onclick = () => {
+      document.body.removeChild(modal)
+      resolve(true)
+    }
+    document.getElementById('cancelBtn').onclick = () => {
+      document.body.removeChild(modal)
+      resolve(false)
+    }
+  })
+  
+  if (!confirmed) return
   
   try {
     const token = localStorage.getItem('token')
@@ -471,16 +768,19 @@ const deleteActivity = async (activity) => {
 
 const closeCreateModal = () => {
   showCreateModal.value = false
+  isEditing.value = false
   newActivity.value = {
     title: '',
     description: '',
     date: '',
+    registration_deadline: '',
     location: '',
     type: 'speed_dating',
     price: 0,
     max_participants: 20,
     age_range: '',
-    image: ''
+    image: '',
+    notes: ''
   }
   selectedImages.value = []
 }
@@ -492,7 +792,14 @@ const closeActivityModal = () => {
 
 const formatDate = (dateString) => {
   if (!dateString) return ''
-  return new Date(dateString).toLocaleDateString('zh-CN')
+  const date = new Date(dateString)
+  return date.toLocaleString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
 }
 
 const getStatusText = (status) => {
@@ -534,6 +841,12 @@ const handleImageDrop = (event) => {
 const processImageFiles = (files) => {
   files.forEach(file => {
     if (file.type.startsWith('image/')) {
+      // 验证文件大小 (最大5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`图片 ${file.name} 大小超过5MB限制`)
+        return
+      }
+      
       const reader = new FileReader()
       reader.onload = (e) => {
         selectedImages.value.push({
@@ -542,6 +855,8 @@ const processImageFiles = (files) => {
         })
       }
       reader.readAsDataURL(file)
+    } else {
+      alert(`文件 ${file.name} 不是有效的图片格式`)
     }
   })
 }
@@ -550,16 +865,36 @@ const removeImage = (index) => {
   selectedImages.value.splice(index, 1)
 }
 
+const clearFilters = () => {
+  searchQuery.value = ''
+  statusFilter.value = ''
+  typeFilter.value = ''
+  filterActivities()
+}
+
 const logout = () => {
   localStorage.removeItem('token')
   localStorage.removeItem('userId')
   localStorage.removeItem('username')
   localStorage.removeItem('role')
+  localStorage.removeItem('userRole')
   router.push('/login')
 }
 
 onMounted(() => {
   fetchActivities()
+  
+  // 添加键盘快捷键支持
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'n') {
+      e.preventDefault()
+      showCreateModal.value = true
+    }
+    if (e.key === 'Escape') {
+      if (showCreateModal.value) closeCreateModal()
+      if (showActivityModal.value) closeActivityModal()
+    }
+  })
 })
 </script>
 
@@ -567,6 +902,7 @@ onMounted(() => {
 .admin-activities {
   min-height: 100vh;
   padding-top: 1rem;
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
 }
 
 .search-section {
@@ -599,9 +935,22 @@ onMounted(() => {
   display: flex;
   gap: 1rem;
   padding: 1rem;
-  background: var(--gray-50);
-  border-radius: var(--radius-md);
+  background: white;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   border-left: 4px solid var(--primary-red);
+}
+
+.activity-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.activity-item.activity-cancelled {
+  opacity: 0.7;
+  background: #f8f9fa;
 }
 
 .activity-image {
@@ -832,6 +1181,12 @@ onMounted(() => {
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-md);
   overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.selected-image-item:hover {
+  transform: scale(1.05);
 }
 
 .preview-image {
@@ -889,6 +1244,61 @@ onMounted(() => {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* 加载动画 */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--primary-red);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .search-section {
+    flex-direction: column;
+  }
+  
+  .search-box {
+    flex-direction: column;
+  }
+  
+  .filter-section {
+    flex-wrap: wrap;
+  }
+  
+  .activity-item {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .activity-actions {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .modal-content {
+    width: 95%;
+    margin: 1rem;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
   }
 }
 </style>

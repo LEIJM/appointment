@@ -8,7 +8,16 @@
           缘梦—时光主理人
         </router-link>
         <div class="navbar-menu">
-          <router-link to="/activities" class="navbar-link">返回活动列表</router-link>
+          <div v-if="currentUser" style="display: flex; align-items: center; gap: 0.5rem;">
+            <router-link to="/profile" class="navbar-link" style="display: flex; align-items: center; gap: 0.5rem;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 2px solid var(--primary-red);">
+                <img :src="currentUser.avatar || '/uploads/customer.png'" :alt="currentUser.nickname || currentUser.username" 
+                     style="width: 100%; height: 100%; object-fit: cover;">
+              </div>
+              <span>{{ currentUser.nickname || currentUser.username }}</span>
+            </router-link>
+          </div>
+          <router-link v-else to="/activities" class="navbar-link">返回活动列表</router-link>
         </div>
       </div>
     </nav>
@@ -59,6 +68,17 @@
               <span style="font-weight: 600;">活动时间：</span>
               <span>{{ formatDate(activity.date) }}</span>
             </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="font-weight: 600;">活动地点：</span>
+              <span>{{ activity.location }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="font-weight: 600;">报名截止：</span>
+              <span :class="{'text-danger': !activity.can_register}">
+                {{ formatDate(activity.registration_deadline) }}
+                <span v-if="!activity.can_register" style="color: var(--danger-red);"> (已截止)</span>
+              </span>
+            </div>
             <div>
               <span style="font-weight: 600;">活动描述：</span>
               <p style="margin-top: 0.5rem; color: var(--gray-600);">{{ activity.details }}</p>
@@ -88,8 +108,13 @@
         <!-- 操作按钮 -->
         <div class="card">
           <div style="display: flex; gap: 1rem; justify-content: center;">
-            <button class="btn btn-primary" style="padding: 0.75rem 2rem;">
-              立即报名
+            <button 
+              class="btn btn-primary" 
+              style="padding: 0.75rem 2rem;"
+              @click="handleRegistration"
+              :disabled="!activity.can_register || activity.is_registered"
+            >
+              {{ activity.is_registered ? '已报名' : (activity.can_register ? '立即报名' : '报名已截止') }}
             </button>
             <router-link to="/activities" class="btn btn-outline" style="padding: 0.75rem 2rem;">
               返回列表
@@ -127,6 +152,7 @@ const route = useRoute()
 const activity = ref(null)
 const loading = ref(true)
 const error = ref('')
+const currentUser = ref(null)
 
 const fetchActivityDetails = async () => {
   try {
@@ -148,6 +174,30 @@ const fetchActivityDetails = async () => {
   }
 }
 
+const handleRegistration = async () => {
+  if (!activity.value.can_register || activity.value.is_registered) {
+    return
+  }
+
+  try {
+    const activityId = route.params.id
+    const token = localStorage.getItem('token')
+    
+    const response = await axios.post(`http://localhost:3001/api/activities/${activityId}/register`, {}, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    
+    alert('报名成功！')
+    // 重新获取活动详情以更新状态
+    await fetchActivityDetails()
+  } catch (err) {
+    console.error('Registration failed:', err)
+    alert(err.response?.data?.error || '报名失败，请重试')
+  }
+}
+
 const formatDate = (dateString) => {
   const date = new Date(dateString)
   return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`
@@ -165,8 +215,30 @@ const getStatusText = (dateString) => {
   return activityDate >= now ? '即将开始' : '已结束'
 }
 
+const fetchCurrentUser = async () => {
+  try {
+    const token = localStorage.getItem('token')
+    const userId = localStorage.getItem('userId')
+    
+    if (token && userId) {
+      const response = await axios.get(`http://localhost:3001/api/users/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      currentUser.value = response.data
+    }
+  } catch (error) {
+    console.error('Failed to fetch current user:', error)
+    // 如果获取失败，清除本地存储
+    localStorage.removeItem('token')
+    localStorage.removeItem('userId')
+  }
+}
+
 onMounted(() => {
   fetchActivityDetails()
+  fetchCurrentUser()
 })
 </script>
 

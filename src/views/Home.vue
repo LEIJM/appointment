@@ -8,8 +8,19 @@
           缘梦—时光主理人
         </div>
         <div class="navbar-menu">
-          <router-link to="/login" class="navbar-link">登录</router-link>
-          <router-link to="/register" class="navbar-link">注册</router-link>
+          <div v-if="currentUser" style="display: flex; align-items: center; gap: 0.5rem;">
+            <router-link to="/profile" class="navbar-link" style="display: flex; align-items: center; gap: 0.5rem;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 2px solid var(--primary-red);">
+                <img :src="currentUser.avatar || '/uploads/customer.png'" :alt="currentUser.nickname || currentUser.username" 
+                     style="width: 100%; height: 100%; object-fit: cover;">
+              </div>
+              <span>{{ currentUser.nickname || currentUser.username }}</span>
+            </router-link>
+          </div>
+          <div v-else style="display: flex; gap: 1rem;">
+            <router-link to="/login" class="navbar-link">登录</router-link>
+            <router-link to="/register" class="navbar-link">注册</router-link>
+          </div>
         </div>
       </div>
     </nav>
@@ -64,17 +75,97 @@
           <p style="color: var(--gray-500); font-size: 0.9rem;">登记资料后,推荐才能更精准</p>
         </div>
         <div style="display: flex; justify-content: space-around; gap: 1rem; margin-top: 1.5rem;">
-          <div style="text-align: center; cursor: pointer;">
+          <!-- 男孩区域 -->
+          <div style="text-align: center; cursor: pointer;" @click="toggleSection('male')">
             <div style="width: 120px; height: 120px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 0.75rem; border: 3px solid var(--purple-300);">
-              <img src="/e:/xiangqin/appointment/uploads/male.jpg" alt="男孩" style="width: 100%; height: 100%; object-fit: cover;">
+              <img src="/uploads/male.jpg" alt="男孩" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
             <span style="background: linear-gradient(to right, #8A2BE2, #A569BD); color: white; padding: 0.5rem 1.5rem; border-radius: var(--radius-full); font-size: 1rem;">男孩</span>
           </div>
-          <div style="text-align: center; cursor: pointer;">
+          <!-- 女孩区域 -->
+          <div style="text-align: center; cursor: pointer;" @click="toggleSection('female')">
             <div style="width: 120px; height: 120px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 0.75rem; border: 3px solid var(--red-300);">
-              <img src="/e:/xiangqin/appointment/uploads/female.jpg" alt="女孩" style="width: 100%; height: 100%; object-fit: cover;">
+              <img src="/uploads/female.jpg" alt="女孩" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
             <span style="background: linear-gradient(to right, #FF6B6B, #FF8E8E); color: white; padding: 0.5rem 1.5rem; border-radius: var(--radius-full); font-size: 1rem;">女孩</span>
+          </div>
+        </div>
+        
+        <!-- 男孩展开区域 -->
+        <div v-if="expandedSection === 'male'" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-200);">
+          <h3 style="color: var(--purple-600); margin-bottom: 1rem; text-align: center;">🎯 最新男孩推荐</h3>
+          <div v-if="maleUsers.length > 0" style="display: grid; gap: 1rem;">
+            <div v-for="user in maleUsers" :key="user.id" 
+                 style="border: 1px solid var(--purple-200); border-radius: var(--radius-lg); padding: 1rem; background: linear-gradient(135deg, #f5f3ff, #ede9fe);">
+              <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+                <div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; border: 2px solid var(--purple-300);">
+                  <img :src="user.avatar || '/uploads/customer.png'" :alt="user.nickname || user.username" 
+                       style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div>
+                  <h4 style="color: var(--purple-700); font-size: 1rem;">{{ user.nickname || user.username }}</h4>
+                  <p style="color: var(--purple-600); font-size: 0.8rem;">{{ user.age }}岁 · {{ user.current_city }}</p>
+                </div>
+              </div>
+              <p v-if="user.personal_introduction" 
+                 style="color: var(--gray-600); font-size: 0.85rem; margin-bottom: 0.5rem;">
+                {{ user.personal_introduction }}
+              </p>
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <span style="background: var(--purple-100); color: var(--purple-700); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.75rem;">
+                  {{ user.height }}cm
+                </span>
+                <span style="background: var(--purple-100); color: var(--purple-700); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.75rem;">
+                  {{ user.education }}
+                </span>
+                <span style="background: var(--purple-100); color: var(--purple-700); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.75rem;">
+                  {{ user.occupation }}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div v-else style="text-align: center; color: var(--gray-500); padding: 1rem;">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">👦</div>
+            <p>暂无男孩信息</p>
+          </div>
+        </div>
+        
+        <!-- 女孩展开区域 -->
+        <div v-if="expandedSection === 'female'" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-200);">
+          <h3 style="color: var(--red-600); margin-bottom: 1rem; text-align: center;">💝 最新女孩推荐</h3>
+          <div v-if="femaleUsers.length > 0" style="display: grid; gap: 1rem;">
+            <div v-for="user in femaleUsers" :key="user.id" 
+                 style="border: 1px solid var(--red-200); border-radius: var(--radius-lg); padding: 1rem; background: linear-gradient(135deg, #fef2f2, #fee2e2);">
+              <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+                <div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; border: 2px solid var(--red-300);">
+                  <img :src="user.avatar || '/uploads/customer.png'" :alt="user.nickname || user.username" 
+                       style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div>
+                  <h4 style="color: var(--red-700); font-size: 1rem;">{{ user.nickname || user.username }}</h4>
+                  <p style="color: var(--red-600); font-size: 0.8rem;">{{ user.age }}岁 · {{ user.current_city }}</p>
+                </div>
+              </div>
+              <p v-if="user.personal_introduction" 
+                 style="color: var(--gray-600); font-size: 0.85rem; margin-bottom: 0.5rem;">
+                {{ user.personal_introduction }}
+              </p>
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <span style="background: var(--red-100); color: var(--red-700); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.75rem;">
+                  {{ user.height }}cm
+                </span>
+                <span style="background: var(--red-100); color: var(--red-700); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.75rem;">
+                  {{ user.education }}
+                </span>
+                <span style="background: var(--red-100); color: var(--red-700); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.75rem;">
+                  {{ user.occupation }}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div v-else style="text-align: center; color: var(--gray-500); padding: 1rem;">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">👧</div>
+            <p>暂无女孩信息</p>
           </div>
         </div>
       </div>
@@ -136,6 +227,10 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
 const activities = ref([])
+const maleUsers = ref([])
+const femaleUsers = ref([])
+const expandedSection = ref('')
+const currentUser = ref(null)
 
 const fetchActivities = async () => {
   try {
@@ -146,13 +241,61 @@ const fetchActivities = async () => {
   }
 }
 
+const fetchUsersByGender = async (gender, limit = 1) => {
+  try {
+    const response = await axios.get(`http://localhost:3001/api/users/latest/${gender}?limit=${limit}`)
+    if (gender === '男') {
+      maleUsers.value = response.data
+    } else {
+      femaleUsers.value = response.data
+    }
+  } catch (error) {
+    console.error(`Failed to fetch ${gender} users:`, error)
+  }
+}
+
+const toggleSection = async (section) => {
+  if (expandedSection.value === section) {
+    expandedSection.value = ''
+  } else {
+    expandedSection.value = section
+    if (section === 'male' && maleUsers.value.length === 0) {
+      await fetchUsersByGender('男')
+    } else if (section === 'female' && femaleUsers.value.length === 0) {
+      await fetchUsersByGender('女')
+    }
+  }
+}
+
 const formatDate = (dateString) => {
   const date = new Date(dateString)
   return `${date.getMonth() + 1}月${date.getDate()}日`
 }
 
+const fetchCurrentUser = async () => {
+  try {
+    const token = localStorage.getItem('token')
+    const userId = localStorage.getItem('userId')
+    
+    if (token && userId) {
+      const response = await axios.get(`http://localhost:3001/api/users/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      currentUser.value = response.data
+    }
+  } catch (error) {
+    console.error('Failed to fetch current user:', error)
+    // 如果获取失败，清除本地存储
+    localStorage.removeItem('token')
+    localStorage.removeItem('userId')
+  }
+}
+
 onMounted(() => {
   fetchActivities()
+  fetchCurrentUser()
 })
 </script>
 

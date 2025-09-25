@@ -194,8 +194,12 @@ const recentUsers = ref([])
 const fetchDashboardData = async () => {
   try {
     const token = localStorage.getItem('token')
-    
-    const [usersRes, activitiesRes, recentUsersRes, recentActivitiesRes] = await Promise.all([
+    if (!token) {
+      router.push('/login')
+      return
+    }
+
+    const requests = [
       axios.get('http://localhost:3001/api/admin/stats/users', {
         headers: { 'Authorization': `Bearer ${token}` }
       }),
@@ -208,12 +212,28 @@ const fetchDashboardData = async () => {
       axios.get('http://localhost:3001/api/admin/activities/recent', {
         headers: { 'Authorization': `Bearer ${token}` }
       })
-    ])
-    
-    stats.value = usersRes.data
-    recentUsers.value = recentUsersRes.data
-    recentActivities.value = recentActivitiesRes.data
-    
+    ]
+
+    const [usersRes, activitiesRes, recentUsersRes, recentActivitiesRes] = await Promise.allSettled(requests)
+
+    if (usersRes.status === 'fulfilled') {
+      stats.value = usersRes.value.data
+    } else {
+      console.error('users stats failed:', usersRes.reason)
+    }
+
+    if (recentUsersRes.status === 'fulfilled') {
+      recentUsers.value = recentUsersRes.value.data
+    } else {
+      console.error('recent users failed:', recentUsersRes.reason)
+    }
+
+    if (recentActivitiesRes.status === 'fulfilled') {
+      recentActivities.value = recentActivitiesRes.value.data
+    } else {
+      console.error('recent activities failed:', recentActivitiesRes.reason)
+    }
+
   } catch (error) {
     console.error('Failed to fetch dashboard data:', error)
     if (error.response?.status === 401) {

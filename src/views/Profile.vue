@@ -8,9 +8,18 @@
           缘梦—时光主理人
         </router-link>
         <div class="navbar-menu">
-          <button @click="handleLogout" class="navbar-link" style="background: none; border: none; cursor: pointer;">
-            退出登录
-          </button>
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 2px solid var(--primary-red);">
+                <img :src="userInfo.avatar || '/uploads/customer.png'" :alt="userInfo.nickname || userInfo.username" 
+                     style="width: 100%; height: 100%; object-fit: cover;">
+              </div>
+              <span style="color: var(--gray-700); font-size: 0.9rem;">{{ userInfo.nickname || userInfo.username }}</span>
+            </div>
+            <button @click="handleLogout" class="navbar-link" style="background: none; border: none; cursor: pointer;">
+              退出登录
+            </button>
+          </div>
         </div>
       </div>
     </nav>

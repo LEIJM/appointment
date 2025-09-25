@@ -8,7 +8,16 @@
           缘梦—时光主理人
         </router-link>
         <div class="navbar-menu">
-          <router-link to="/profile" class="navbar-link">个人中心</router-link>
+          <div v-if="currentUser" style="display: flex; align-items: center; gap: 0.5rem;">
+            <router-link to="/profile" class="navbar-link" style="display: flex; align-items: center; gap: 0.5rem;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 2px solid var(--primary-red);">
+                <img :src="currentUser.avatar || '/uploads/customer.png'" :alt="currentUser.nickname || currentUser.username" 
+                     style="width: 100%; height: 100%; object-fit: cover;">
+              </div>
+              <span>{{ currentUser.nickname || currentUser.username }}</span>
+            </router-link>
+          </div>
+          <router-link v-else to="/profile" class="navbar-link">个人中心</router-link>
         </div>
       </div>
     </nav>
@@ -138,6 +147,7 @@ const router = useRouter()
 const activities = ref([])
 const loading = ref(true)
 const filterCategory = ref('all')
+const currentUser = ref(null)
 
 const fetchActivities = async () => {
   try {
@@ -192,8 +202,30 @@ const viewActivityDetails = (activity) => {
   router.push(`/activities/${activity.id}`)
 }
 
+const fetchCurrentUser = async () => {
+  try {
+    const token = localStorage.getItem('token')
+    const userId = localStorage.getItem('userId')
+    
+    if (token && userId) {
+      const response = await axios.get(`http://localhost:3001/api/users/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      currentUser.value = response.data
+    }
+  } catch (error) {
+    console.error('Failed to fetch current user:', error)
+    // 如果获取失败，清除本地存储
+    localStorage.removeItem('token')
+    localStorage.removeItem('userId')
+  }
+}
+
 onMounted(() => {
   fetchActivities()
+  fetchCurrentUser()
 })
 </script>
 

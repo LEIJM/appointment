@@ -264,6 +264,12 @@ body {
   color: var(--primary-red);
 }
 
+/* 让当前路由的底部导航项自动高亮，避免手动类名错乱 */
+.bottom-nav-item.router-link-active,
+.bottom-nav-item.router-link-exact-active {
+  color: var(--primary-red);
+}
+
 .bottom-nav-item:hover {
   color: var(--primary-red);
 }

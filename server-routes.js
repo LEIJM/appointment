@@ -333,15 +333,19 @@ export function setupRoutes(app) {
       })
   })
 
-  // 获取单个活动详情
+  // 获取单个活动详情（包含报名状态）
   app.get('/api/activities/:id', authenticateToken, (req, res) => {
     const activityId = req.params.id
+    const userId = req.user.id
     
-    db.get(`SELECT a.*, GROUP_CONCAT(ap.photo_url) as photos
+    db.get(`SELECT a.*, GROUP_CONCAT(ap.photo_url) as photos,
+            CASE WHEN ar.id IS NOT NULL THEN 1 ELSE 0 END as is_registered,
+            CASE WHEN datetime('now') <= datetime(a.registration_deadline) THEN 1 ELSE 0 END as can_register
             FROM activities a
             LEFT JOIN activity_photos ap ON a.id = ap.activity_id
+            LEFT JOIN activity_registrations ar ON a.id = ar.activity_id AND ar.user_id = ?
             WHERE a.id = ? AND a.status = 1
-            GROUP BY a.id`, [activityId], (err, row) => {
+            GROUP BY a.id`, [userId, activityId], (err, row) => {
       if (err) {
         return res.status(500).json({ error: err.message })
       }
@@ -354,11 +358,15 @@ export function setupRoutes(app) {
 
   // 管理员活动路由
   app.get('/api/admin/activities', authenticateToken, requireAdmin, (req, res) => {
-    db.all(`SELECT a.*, GROUP_CONCAT(ap.photo_url) as photos,
-            CASE WHEN a.status = 1 THEN 'upcoming' ELSE 'cancelled' END AS status,
-            NULL AS location,
-            NULL AS max_participants,
-            0 AS participants
+    db.all(`SELECT 
+              a.*, 
+              GROUP_CONCAT(ap.photo_url) AS photos,
+              CASE WHEN a.status = 1 THEN 'upcoming' ELSE 'cancelled' END AS status,
+              (
+                SELECT COUNT(1) 
+                FROM activity_registrations ar 
+                WHERE ar.activity_id = a.id
+              ) AS current_participants
             FROM activities a
             LEFT JOIN activity_photos ap ON a.id = ap.activity_id
             GROUP BY a.id
@@ -371,12 +379,16 @@ export function setupRoutes(app) {
   })
 
   app.get('/api/admin/activities/recent', authenticateToken, requireAdmin, (req, res) => {
-    db.all(`SELECT a.id, a.title, a.date,
-            CASE WHEN a.status = 1 THEN 'upcoming' ELSE 'cancelled' END AS status,
-            NULL AS location,
-            NULL AS max_participants,
-            0 AS participants,
-            GROUP_CONCAT(ap.photo_url) as photos
+    db.all(`SELECT 
+              a.id, a.title, a.date, a.registration_deadline,
+              a.location, a.type, a.price, a.max_participants, a.age_range,
+              CASE WHEN a.status = 1 THEN 'upcoming' ELSE 'cancelled' END AS status,
+              (
+                SELECT COUNT(1) 
+                FROM activity_registrations ar 
+                WHERE ar.activity_id = a.id
+              ) AS current_participants,
+              GROUP_CONCAT(ap.photo_url) AS photos
             FROM activities a
             LEFT JOIN activity_photos ap ON a.id = ap.activity_id
             GROUP BY a.id
@@ -411,16 +423,21 @@ export function setupRoutes(app) {
     })
   })
 
-  // 创建活动（兼容当前activities表结构）
+  // 创建活动（支持报名截止时间）
   app.post('/api/admin/activities/create', authenticateToken, requireAdmin, upload.array('images'), (req, res) => {
-    const { title, description, date } = req.body
-    if (!title || !date) {
-      return res.status(400).json({ error: 'title and date are required' })
+    const { title, description, date, registration_deadline, location, type, price, max_participants, age_range, notes } = req.body
+    if (!title || !date || !registration_deadline) {
+      return res.status(400).json({ error: 'title, date, and registration_deadline are required' })
     }
     const details = description || null
-    const notes = null
-    db.run('INSERT INTO activities (date, title, details, notes) VALUES (?, ?, ?, ?)',
-      [date, title, details, notes], function(err) {
+    const loc = location || null
+    const actType = type || null
+    const actPrice = (price === undefined || price === null || price === '') ? 0 : Number(price)
+    const maxP = (max_participants === undefined || max_participants === null || max_participants === '') ? 0 : Number(max_participants)
+    const ageRange = age_range || null
+    const noteVal = notes || null
+    db.run('INSERT INTO activities (date, registration_deadline, title, details, notes, location, type, price, max_participants, age_range) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [date, registration_deadline, title, details, noteVal, loc, actType, actPrice, maxP, ageRange], function(err) {
         if (err) {
           return res.status(500).json({ error: err.message })
         }
@@ -477,6 +494,105 @@ export function setupRoutes(app) {
         result.activeActivities = row2?.c || 0
         res.json(result)
       })
+    })
+  })
+
+  // 报名相关API
+  app.post('/api/activities/:id/register', authenticateToken, (req, res) => {
+    const activityId = req.params.id
+    const userId = req.user.id
+    const { notes } = req.body
+
+    // 检查活动是否存在且可报名
+    db.get(`SELECT a.*, 
+            CASE WHEN datetime('now') <= datetime(a.registration_deadline) THEN 1 ELSE 0 END as can_register
+            FROM activities a
+            WHERE a.id = ? AND a.status = 1`, [activityId], (err, activity) => {
+      if (err) {
+        return res.status(500).json({ error: err.message })
+      }
+      if (!activity) {
+        return res.status(404).json({ error: 'Activity not found' })
+      }
+      if (!activity.can_register) {
+        return res.status(400).json({ error: 'Registration deadline has passed' })
+      }
+
+      // 检查是否已报名
+      db.get('SELECT id FROM activity_registrations WHERE activity_id = ? AND user_id = ?', 
+        [activityId, userId], (err, existing) => {
+        if (err) {
+          return res.status(500).json({ error: err.message })
+        }
+        if (existing) {
+          return res.status(400).json({ error: 'Already registered for this activity' })
+        }
+
+        // 创建报名记录
+        db.run('INSERT INTO activity_registrations (activity_id, user_id, notes) VALUES (?, ?, ?)',
+          [activityId, userId, notes || null], function(err) {
+            if (err) {
+              return res.status(500).json({ error: err.message })
+            }
+            res.json({ message: 'Registration successful', id: this.lastID })
+          })
+      })
+    })
+  })
+
+  app.delete('/api/activities/:id/register', authenticateToken, (req, res) => {
+    const activityId = req.params.id
+    const userId = req.user.id
+
+    db.run('DELETE FROM activity_registrations WHERE activity_id = ? AND user_id = ?',
+      [activityId, userId], function(err) {
+        if (err) {
+          return res.status(500).json({ error: err.message })
+        }
+        if (this.changes === 0) {
+          return res.status(404).json({ error: 'Registration not found' })
+        }
+        res.json({ message: 'Registration cancelled successfully' })
+      })
+  })
+
+  app.get('/api/activities/:id/registrations', authenticateToken, (req, res) => {
+    const activityId = req.params.id
+
+    db.all(`SELECT ar.*, u.username, ud.nickname, ud.gender, ud.age
+            FROM activity_registrations ar
+            JOIN users u ON ar.user_id = u.id
+            LEFT JOIN user_details ud ON u.id = ud.user_id
+            WHERE ar.activity_id = ?
+            ORDER BY ar.registration_time DESC`, [activityId], (err, rows) => {
+      if (err) {
+        return res.status(500).json({ error: err.message })
+      }
+      res.json(rows)
+    })
+  })
+
+  // 获取最新用户数据（按性别）
+  app.get('/api/users/latest/:gender', (req, res) => {
+    const gender = req.params.gender
+    const limit = parseInt(req.query.limit) || 1
+
+    if (!['男', '女'].includes(gender)) {
+      return res.status(400).json({ error: 'Invalid gender parameter' })
+    }
+
+    db.all(`SELECT u.id, u.username, u.avatar, ud.nickname, ud.gender, ud.age, 
+                   ud.height, ud.education, ud.occupation, ud.current_city,
+                   ud.personal_introduction
+            FROM users u
+            LEFT JOIN user_details ud ON u.id = ud.user_id
+            WHERE ud.gender = ? AND u.status = 1
+            ORDER BY u.created_at DESC
+            LIMIT ?`, [gender, limit], (err, rows) => {
+      if (err) {
+        return res.status(500).json({ error: err.message })
+      }
+      res.json(rows)
     })
   })
 }

@@ -31,6 +31,23 @@
           <span style="font-size: 1.2rem;">👤</span>
           基本信息
         </div>
+        <!-- 头像上传 -->
+        <div class="form-group">
+          <label class="form-label">头像</label>
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 3px solid var(--primary-red); cursor: pointer;" @click="triggerFileInput">
+              <img :src="avatarPreview || form.avatar || '/uploads/customer.png'" alt="头像" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div>
+              <input ref="fileInput" type="file" accept="image/*" style="display: none;" @change="handleAvatarUpload">
+              <button type="button" @click="triggerFileInput" class="btn btn-secondary" style="margin-bottom: 0.5rem;">
+                <span style="margin-right: 0.5rem;">📷</span>
+                上传头像
+              </button>
+              <p style="color: var(--gray-500); font-size: 0.8rem;">点击头像或按钮上传新头像</p>
+            </div>
+          </div>
+        </div>
         <div class="form-group">
           <label class="form-label">昵称</label>
           <input v-model="form.nickname" type="text" class="form-input" placeholder="请输入您的昵称">
@@ -293,6 +310,9 @@ const router = useRouter()
 const saving = ref(false)
 const message = ref('')
 const messageType = ref('')
+const fileInput = ref(null)
+const avatarPreview = ref('')
+const avatarFile = ref(null)
 
 const form = ref({
   nickname: '',
@@ -354,6 +374,38 @@ const fetchUserDetails = async () => {
   }
 }
 
+const triggerFileInput = () => {
+  fileInput.value?.click()
+}
+
+const handleAvatarUpload = (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+
+  // 验证文件类型
+  if (!file.type.startsWith('image/')) {
+    message.value = '请选择图片文件'
+    messageType.value = 'error'
+    return
+  }
+
+  // 验证文件大小（限制为5MB）
+  if (file.size > 5 * 1024 * 1024) {
+    message.value = '图片文件大小不能超过5MB'
+    messageType.value = 'error'
+    return
+  }
+
+  avatarFile.value = file
+  
+  // 创建预览
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    avatarPreview.value = e.target.result
+  }
+  reader.readAsDataURL(file)
+}
+
 const saveDetails = async () => {
   saving.value = true
   message.value = ''
@@ -362,9 +414,26 @@ const saveDetails = async () => {
     const token = localStorage.getItem('token')
     const userId = localStorage.getItem('userId')
     
-    await axios.put(`http://localhost:3001/api/users/${userId}/details`, form.value, {
+    // 创建表单数据
+    const formData = new FormData()
+    
+    // 如果有头像文件，添加到表单
+    if (avatarFile.value) {
+      formData.append('avatar', avatarFile.value)
+    }
+    
+    // 添加其他表单数据
+    Object.keys(form.value).forEach(key => {
+      if (form.value[key] !== null && form.value[key] !== undefined && form.value[key] !== '') {
+        formData.append(key, form.value[key])
+      }
+    })
+    
+    // 一次性提交所有数据
+    await axios.put(`http://localhost:3001/api/users/${userId}/details`, formData, {
       headers: {
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
       }
     })
     
