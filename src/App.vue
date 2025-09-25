@@ -47,7 +47,7 @@ onMounted(() => {
   
   /* 渐变背景 */
   --gradient-primary: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-pink) 100%);
-  --gradient-secondary: linear-gradient(135deg, var(--primary-gold) 0%, var(--secondary-orange) 100%);
+  --gradient-secondary: linear-gradient(135deg, var(--primary-gold) 0%, var(--primary-orange) 100%);
   --gradient-accent: linear-gradient(135deg, var(--secondary-purple) 0%, var(--secondary-blue) 100%);
   
   /* 阴影 */

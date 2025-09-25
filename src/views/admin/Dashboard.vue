@@ -5,7 +5,7 @@
       <div class="navbar-content">
         <router-link to="/" class="navbar-brand">
           <span class="heart-icon">❤️</span>
-          缘来是你 - 管理后台
+          缘梦—时光主理人 - 管理后台
         </router-link>
         <div class="navbar-menu">
           <span style="color: var(--gray-600); margin-right: 1rem;">管理员: {{ adminName }}</span>

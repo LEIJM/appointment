@@ -5,7 +5,7 @@
       <div class="navbar-content">
         <router-link to="/" class="navbar-brand">
           <span class="heart-icon">❤️</span>
-          缘来是你
+          缘梦—时光主理人
         </router-link>
         <div class="navbar-menu">
           <router-link to="/profile" class="navbar-link">个人中心</router-link>
@@ -188,8 +188,8 @@ const getStatusText = (dateString) => {
 }
 
 const viewActivityDetails = (activity) => {
-  // Navigate to activity details page or show modal
-  console.log('View activity details:', activity)
+  // Navigate to activity details page
+  router.push(`/activities/${activity.id}`)
 }
 
 onMounted(() => {

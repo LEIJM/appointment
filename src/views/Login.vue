@@ -5,7 +5,7 @@
       <div class="navbar-content">
         <router-link to="/" class="navbar-brand">
           <span class="heart-icon">❤️</span>
-          缘来是你
+          缘梦—时光主理人
         </router-link>
         <div class="navbar-menu">
           <router-link to="/" class="navbar-link">返回首页</router-link>
@@ -61,16 +61,6 @@
           <router-link to="/register" class="btn btn-outline" style="width: 100%;">
             立即注册
           </router-link>
-        </div>
-        
-        <!-- 管理员快速登录提示 -->
-        <div style="background: var(--gray-50); border-radius: var(--radius-md); padding: 1rem; margin-top: 1rem;">
-          <p style="color: var(--gray-600); font-size: 0.8rem; margin-bottom: 0.5rem;">
-            👨‍💼 管理员测试账号：
-          </p>
-          <p style="color: var(--gray-600); font-size: 0.8rem;">
-            用户名：admin | 密码：admin123
-          </p>
         </div>
       </div>
       

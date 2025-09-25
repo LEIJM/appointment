@@ -5,7 +5,7 @@
       <div class="navbar-content">
         <router-link to="/" class="navbar-brand">
           <span class="heart-icon">❤️</span>
-          缘来是你 - 活动管理
+          缘梦—时光主理人 - 活动管理
         </router-link>
         <div class="navbar-menu">
           <button @click="showCreateModal = true" class="btn btn-primary">创建活动</button>
@@ -215,8 +215,29 @@
               <input v-model="newActivity.age_range" type="text" class="form-input" placeholder="如：25-35岁">
             </div>
             <div class="form-group">
-              <label class="form-label">活动图片URL</label>
-              <input v-model="newActivity.image" type="url" class="form-input" placeholder="https://example.com/image.jpg">
+              <label class="form-label">活动图片</label>
+              <div class="image-upload-area" @drop="handleImageDrop" @dragover.prevent @dragenter.prevent>
+                <input 
+                  ref="imageInput" 
+                  type="file" 
+                  multiple 
+                  accept="image/*" 
+                  @change="handleImageSelect"
+                  style="display: none"
+                >
+                <div class="upload-placeholder" @click="triggerImageUpload">
+                  <div style="font-size: 2rem; margin-bottom: 0.5rem;">📷</div>
+                  <div>点击上传图片或拖拽图片到此处</div>
+                  <div style="font-size: 0.8rem; color: var(--gray-500); margin-top: 0.25rem;">支持多张图片上传</div>
+                </div>
+              </div>
+              <div v-if="selectedImages.length > 0" class="selected-images">
+                <div v-for="(image, index) in selectedImages" :key="index" class="selected-image-item">
+                  <img :src="image.preview" :alt="`活动图片 ${index + 1}`" class="preview-image">
+                  <button @click="removeImage(index)" class="remove-image-btn">×</button>
+                  <div class="image-name">{{ image.file.name }}</div>
+                </div>
+              </div>
             </div>
           </form>
         </div>
@@ -298,6 +319,8 @@ const showCreateModal = ref(false)
 const showActivityModal = ref(false)
 const selectedActivity = ref(null)
 const creating = ref(false)
+const selectedImages = ref([])
+const imageInput = ref(null)
 
 const newActivity = ref({
   title: '',
@@ -362,8 +385,27 @@ const createActivity = async () => {
   creating.value = true
   try {
     const token = localStorage.getItem('token')
-    await axios.post('http://localhost:3001/api/admin/activities', newActivity.value, {
-      headers: { 'Authorization': `Bearer ${token}` }
+    
+    // Create FormData to handle file uploads
+    const formData = new FormData()
+    
+    // Add activity data
+    Object.keys(newActivity.value).forEach(key => {
+      if (newActivity.value[key] !== null && newActivity.value[key] !== undefined) {
+        formData.append(key, newActivity.value[key])
+      }
+    })
+    
+    // Add images
+    selectedImages.value.forEach((image, index) => {
+      formData.append('images', image.file)
+    })
+    
+    await axios.post('http://localhost:3001/api/admin/activities/create', formData, {
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
+      }
     })
     
     await fetchActivities()
@@ -440,6 +482,7 @@ const closeCreateModal = () => {
     age_range: '',
     image: ''
   }
+  selectedImages.value = []
 }
 
 const closeActivityModal = () => {
@@ -470,6 +513,41 @@ const getTypeText = (type) => {
     'outdoor_activity': '户外活动'
   }
   return typeMap[type] || type
+}
+
+// Image handling methods
+const triggerImageUpload = () => {
+  imageInput.value?.click()
+}
+
+const handleImageSelect = (event) => {
+  const files = Array.from(event.target.files)
+  processImageFiles(files)
+}
+
+const handleImageDrop = (event) => {
+  event.preventDefault()
+  const files = Array.from(event.dataTransfer.files)
+  processImageFiles(files)
+}
+
+const processImageFiles = (files) => {
+  files.forEach(file => {
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        selectedImages.value.push({
+          file,
+          preview: e.target.result
+        })
+      }
+      reader.readAsDataURL(file)
+    }
+  })
+}
+
+const removeImage = (index) => {
+  selectedImages.value.splice(index, 1)
 }
 
 const logout = () => {
@@ -718,6 +796,85 @@ onMounted(() => {
 
 .detail-value {
   color: var(--gray-800);
+}
+
+/* Image upload styles */
+.image-upload-area {
+  border: 2px dashed var(--gray-300);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.image-upload-area:hover {
+  border-color: var(--primary-red);
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+.upload-placeholder {
+  color: var(--gray-500);
+  cursor: pointer;
+}
+
+.selected-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.selected-image-item {
+  position: relative;
+  width: 6rem;
+  height: 6rem;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  background: rgba(239, 68, 68, 0.8);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.remove-image-btn:hover {
+  background: var(--primary-red);
+}
+
+.image-name {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-size: 0.7rem;
+  padding: 0.25rem;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .fade-in-up {

@@ -5,7 +5,7 @@
       <div class="navbar-content">
         <router-link to="/" class="navbar-brand">
           <span class="heart-icon">❤️</span>
-          缘来是你 - 用户管理
+          缘梦—时光主理人 - 用户管理
         </router-link>
         <div class="navbar-menu">
           <router-link to="/admin" class="navbar-link">返回后台</router-link>
@@ -50,6 +50,7 @@
               <option value="男">男</option>
               <option value="女">女</option>
             </select>
+            <button @click="showCreateModal = true" class="btn btn-success">➕ 创建用户</button>
           </div>
         </div>
       </div>
@@ -198,6 +199,102 @@
         </div>
       </div>
     </div>
+
+    <!-- 创建/编辑用户模态框 -->
+    <div v-if="showCreateModal || showEditModal" class="modal-overlay" @click="closeCreateModal">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h3>{{ showEditModal ? '编辑用户' : '创建用户' }}</h3>
+          <button @click="closeCreateModal" class="modal-close">×</button>
+        </div>
+        <div class="modal-body">
+          <form @submit.prevent="saveUser" class="user-form">
+            <div class="form-group">
+              <label>用户名 *</label>
+              <input 
+                v-model="userForm.username" 
+                type="text" 
+                class="form-input" 
+                required
+                :disabled="showEditModal"
+              >
+            </div>
+            <div class="form-group">
+              <label>邮箱 *</label>
+              <input 
+                v-model="userForm.email" 
+                type="email" 
+                class="form-input" 
+                required
+              >
+            </div>
+            <div class="form-group">
+              <label>密码 {{ showEditModal ? '(留空则不修改)' : '*' }}</label>
+              <input 
+                v-model="userForm.password" 
+                type="password" 
+                class="form-input" 
+                :required="!showEditModal"
+              >
+            </div>
+            <div class="form-group">
+              <label>昵称</label>
+              <input 
+                v-model="userForm.nickname" 
+                type="text" 
+                class="form-input"
+              >
+            </div>
+            <div class="form-group">
+              <label>性别</label>
+              <select v-model="userForm.gender" class="form-input">
+                <option value="">请选择</option>
+                <option value="男">男</option>
+                <option value="女">女</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>年龄</label>
+              <input 
+                v-model="userForm.age" 
+                type="number" 
+                class="form-input"
+                min="18"
+                max="100"
+              >
+            </div>
+            <div class="form-group">
+              <label>位置</label>
+              <input 
+                v-model="userForm.location" 
+                type="text" 
+                class="form-input"
+              >
+            </div>
+            <div class="form-group">
+              <label>验证状态</label>
+              <select v-model="userForm.is_verified" class="form-input">
+                <option value="1">已验证</option>
+                <option value="0">未验证</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>角色</label>
+              <select v-model="userForm.role" class="form-input">
+                <option value="user">普通用户</option>
+                <option value="admin">管理员</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button @click="closeCreateModal" class="btn btn-outline">取消</button>
+          <button @click="saveUser" class="btn btn-primary" :disabled="saving">
+            {{ saving ? '保存中...' : '保存' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -217,6 +314,20 @@ const currentPage = ref(1)
 const itemsPerPage = 10
 const showUserModal = ref(false)
 const selectedUser = ref(null)
+const showCreateModal = ref(false)
+const showEditModal = ref(false)
+const saving = ref(false)
+const userForm = ref({
+  username: '',
+  email: '',
+  password: '',
+  nickname: '',
+  gender: '',
+  age: '',
+  location: '',
+  is_verified: '1',
+  role: 'user'
+})
 
 const paginatedUsers = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage
@@ -275,8 +386,19 @@ const viewUser = (user) => {
 }
 
 const editUser = (user) => {
-  // Navigate to user edit page or open edit modal
-  console.log('Edit user:', user)
+  userForm.value = {
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    password: '',
+    nickname: user.nickname || '',
+    gender: user.gender || '',
+    age: user.age || '',
+    location: user.location || '',
+    is_verified: user.is_verified ? '1' : '0',
+    role: user.role || 'user'
+  }
+  showEditModal.value = true
 }
 
 const toggleVerification = async (user) => {
@@ -320,6 +442,56 @@ const deleteUser = async (user) => {
 const closeUserModal = () => {
   showUserModal.value = false
   selectedUser.value = null
+}
+
+const closeCreateModal = () => {
+  showCreateModal.value = false
+  showEditModal.value = false
+  userForm.value = {
+    username: '',
+    email: '',
+    password: '',
+    nickname: '',
+    gender: '',
+    age: '',
+    location: '',
+    is_verified: '1',
+    role: 'user'
+  }
+}
+
+const saveUser = async () => {
+  saving.value = true
+  try {
+    const token = localStorage.getItem('token')
+    const formData = { ...userForm.value }
+    
+    // Remove password field if empty during edit
+    if (showEditModal.value && !formData.password) {
+      delete formData.password
+    }
+    
+    let response
+    if (showEditModal.value) {
+      response = await axios.put(`http://localhost:3001/api/admin/users/${formData.id}`, formData, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+    } else {
+      response = await axios.post('http://localhost:3001/api/admin/users', formData, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+    }
+    
+    // Refresh user list
+    await fetchUsers()
+    closeCreateModal()
+    
+  } catch (error) {
+    console.error('Failed to save user:', error)
+    alert('保存失败，请重试')
+  } finally {
+    saving.value = false
+  }
 }
 
 const formatDate = (dateString) => {
@@ -561,6 +733,53 @@ onMounted(() => {
   border-top: 1px solid var(--gray-200);
   display: flex;
   justify-content: flex-end;
+}
+
+.user-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: var(--gray-700);
+  font-size: 0.9rem;
+}
+
+.form-input {
+  padding: 0.75rem;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-red);
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
+.btn-success {
+  background: var(--secondary-green);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.btn-success:hover {
+  background: #45a049;
 }
 
 .fade-in-up {

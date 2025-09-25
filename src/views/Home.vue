@@ -5,7 +5,7 @@
       <div class="navbar-content">
         <div class="navbar-brand">
           <span class="heart-icon">❤️</span>
-          缘来是你
+          缘梦—时光主理人
         </div>
         <div class="navbar-menu">
           <router-link to="/login" class="navbar-link">登录</router-link>
@@ -19,7 +19,7 @@
       <!-- 欢迎区域 -->
       <div class="festive-bg fade-in-up" style="margin: 1rem 0;">
         <h1 style="color: var(--primary-red); font-size: 1.5rem; margin-bottom: 0.5rem;">
-          欢迎来到缘来是你
+          欢迎来到缘梦
         </h1>
         <p style="color: var(--gray-600); font-size: 0.9rem;">
           在这里，遇见你的命中注定 💕
@@ -57,21 +57,25 @@
         </div>
       </div>
 
-      <!-- 快速开始 -->
+      <!-- 性别选择 -->
       <div class="card fade-in-up">
-        <div class="card-header">
-          <span style="font-size: 1.2rem;">🚀</span>
-          快速开始
+        <div class="card-header" style="text-align: center; display: block;">
+          <h2 style="font-size: 1.4rem; color: var(--gray-800); margin-bottom: 0.5rem;">您想找他?还是找她?</h2>
+          <p style="color: var(--gray-500); font-size: 0.9rem;">登记资料后,推荐才能更精准</p>
         </div>
-        <div style="display: grid; gap: 1rem;">
-          <router-link to="/register" class="btn btn-primary" style="text-align: center;">
-            <span style="margin-right: 0.5rem;">💕</span>
-            立即注册
-          </router-link>
-          <router-link to="/login" class="btn btn-outline" style="text-align: center;">
-            <span style="margin-right: 0.5rem;">🔑</span>
-            已有账号？立即登录
-          </router-link>
+        <div style="display: flex; justify-content: space-around; gap: 1rem; margin-top: 1.5rem;">
+          <div style="text-align: center; cursor: pointer;">
+            <div style="width: 120px; height: 120px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 0.75rem; border: 3px solid var(--purple-300);">
+              <img src="/e:/xiangqin/appointment/uploads/male.jpg" alt="男孩" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <span style="background: linear-gradient(to right, #8A2BE2, #A569BD); color: white; padding: 0.5rem 1.5rem; border-radius: var(--radius-full); font-size: 1rem;">男孩</span>
+          </div>
+          <div style="text-align: center; cursor: pointer;">
+            <div style="width: 120px; height: 120px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 0.75rem; border: 3px solid var(--red-300);">
+              <img src="/e:/xiangqin/appointment/uploads/female.jpg" alt="女孩" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <span style="background: linear-gradient(to right, #FF6B6B, #FF8E8E); color: white; padding: 0.5rem 1.5rem; border-radius: var(--radius-full); font-size: 1rem;">女孩</span>
+          </div>
         </div>
       </div>
 

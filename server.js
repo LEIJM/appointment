@@ -298,6 +298,25 @@ app.get('/api/activities', authenticateToken, (req, res) => {
   });
 });
 
+// Get single activity details
+app.get('/api/activities/:id', authenticateToken, (req, res) => {
+  const activityId = req.params.id;
+  
+  db.get(`SELECT a.*, GROUP_CONCAT(ap.photo_url) as photos
+          FROM activities a
+          LEFT JOIN activity_photos ap ON a.id = ap.activity_id
+          WHERE a.id = ? AND a.status = 1
+          GROUP BY a.id`, [activityId], (err, row) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    if (!row) {
+      return res.status(404).json({ error: 'Activity not found' });
+    }
+    res.json(row);
+  });
+});
+
 // Public activities route (no authentication required)
 app.get('/api/activities/public', (req, res) => {
   db.all(`SELECT a.*, GROUP_CONCAT(ap.photo_url) as photos

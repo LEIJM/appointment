@@ -82,7 +82,7 @@ async function startFrontend() {
 // 主函数
 async function main() {
   console.log('🎯 Starting fullstack application...')
-  console.log('=' .repeat(50))
+  console.log('='.repeat(50))
   
   try {
     // 启动后端服务器
@@ -94,7 +94,7 @@ async function main() {
     // 启动前端服务器
     const frontendProcess = await startFrontend()
     
-    console.log('=' .repeat(50))
+    console.log('='.repeat(50))
     console.log('🎉 Fullstack application started successfully!')
     console.log(`📱 Frontend: http://localhost:${FRONTEND_PORT}`)
     console.log(`🔧 Backend API: http://localhost:${PORT}/api`)

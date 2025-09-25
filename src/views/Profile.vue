@@ -5,7 +5,7 @@
       <div class="navbar-content">
         <router-link to="/" class="navbar-brand">
           <span class="heart-icon">❤️</span>
-          缘来是你
+          缘梦—时光主理人
         </router-link>
         <div class="navbar-menu">
           <button @click="handleLogout" class="navbar-link" style="background: none; border: none; cursor: pointer;">
