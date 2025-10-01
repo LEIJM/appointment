@@ -9,6 +9,7 @@ export default defineConfig({
   // 开发服务器配置
   server: {
     port: 5173,
+    host: '0.0.0.0',
     proxy: {
       '/api': {
         target: 'http://localhost:3001',

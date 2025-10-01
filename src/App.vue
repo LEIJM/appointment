@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <div class="background-overlay"></div>
     <router-view />
   </div>
 </template>
@@ -22,14 +23,14 @@ onMounted(() => {
 <style>
 /* 喜庆但现代的配色方案 */
 :root {
-  /* 主色调 - 温暖的珊瑚红和金色 */
-  --primary-red: #FF6B6B;
+  /* 主色调 - 紫红色和金色 */
+  --primary-red: #f68eed;  /* 更柔和的紫红色调 */
   --primary-gold: #FFD93D;
-  --primary-pink: #FF8E9B;
+  --primary-pink: #F48FB1;  /* 更淡的粉红色 */
   --primary-orange: #FFA726;
   
   /* 辅助色调 - 现代感的渐变 */
-  --secondary-purple: #A78BFA;
+  --secondary-purple: #BA68C8;  /* 稍微深一点的紫色 */
   --secondary-blue: #60A5FA;
   --secondary-green: #34D399;
   
@@ -72,10 +73,11 @@ onMounted(() => {
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  background: linear-gradient(135deg, #FFF5F5 0%, #FFF8E1 100%);
+  background: linear-gradient(135deg, #FCE4EC 0%, #FFF8E1 100%);
   min-height: 100vh;
   color: var(--gray-700);
   line-height: 1.6;
+  position: relative;
 }
 
 #app {
@@ -141,7 +143,12 @@ body {
 
 /* 卡片样式 */
 .card {
-  background: white;
+  background: linear-gradient(to bottom, 
+    rgba(255, 255, 255, 1) 0%,      /* 上部纯白色 */
+    rgba(255, 255, 255, 0.8) 50%,   /* 中间半透明 */
+    rgba(255, 255, 255, 0.4) 80%,   /* 接近底部更透明 */
+    rgba(255, 255, 255, 0) 100%     /* 底部完全透明 */
+  );
   border-radius: var(--radius-xl);
   padding: 1.5rem;
   box-shadow: var(--shadow-lg);
@@ -187,7 +194,7 @@ body {
 .form-input:focus {
   outline: none;
   border-color: var(--primary-red);
-  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+  box-shadow: 0 0 0 3px rgba(229, 115, 115, 0.1);
 }
 
 .form-input::placeholder {
@@ -344,7 +351,7 @@ body {
 }
 
 .festive-bg {
-  background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 217, 61, 0.1) 100%);
+  background: transparent;
   border-radius: var(--radius-xl);
   padding: 2rem;
   text-align: center;
@@ -365,5 +372,23 @@ body {
   font-size: 2rem;
   opacity: 0.3;
   transform: rotate(15deg);
+}
+
+/* 背景图片样式 */
+.background-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/uploads/background.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  opacity: 0.2;
+  z-index: -1;
+  pointer-events: none;
+  min-height: 100vh;
+  width: 100vw;
 }
 </style>

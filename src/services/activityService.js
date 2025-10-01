@@ -20,6 +20,12 @@ export const activityService = {
     return response.data
   },
 
+  // 获取活动详情（公开访问，无需认证）
+  async getPublicActivityById(activityId) {
+    const response = await api.get(API_ENDPOINTS.ACTIVITIES.PUBLIC_DETAILS(activityId))
+    return response.data
+  },
+
   // 活动报名
   async registerForActivity(activityId, notes = '') {
     const response = await api.post(API_ENDPOINTS.ACTIVITIES.REGISTER(activityId), { notes })

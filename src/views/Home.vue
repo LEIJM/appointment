@@ -29,41 +29,19 @@
     <div class="container" style="padding-bottom: 80px;">
       <!-- 欢迎区域 -->
       <div class="festive-bg fade-in-up" style="margin: 1rem 0;">
-        <h1 style="color: var(--primary-red); font-size: 1.5rem; margin-bottom: 0.5rem;">
-          欢迎来到缘梦
-        </h1>
-        <p style="color: var(--gray-600); font-size: 0.9rem;">
-          在这里，遇见你的命中注定 💕
-        </p>
-      </div>
-
-      <!-- 特色功能卡片 -->
-      <div class="card fade-in-up">
-        <div class="card-header">
-          <span style="font-size: 1.2rem;">✨</span>
-          平台特色
-        </div>
-        <div style="display: grid; gap: 1rem;">
-          <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <div style="width: 40px; height: 40px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem;">💝</div>
-            <div>
-              <h3 style="font-size: 1rem; color: var(--gray-800); margin-bottom: 0.25rem;">真实认证</h3>
-              <p style="font-size: 0.85rem; color: var(--gray-600);">严格身份验证，确保交友安全</p>
-            </div>
+        <div style="display: flex; align-items: center; gap: 2rem;">
+          <!-- 左侧标题区域 -->
+          <div style="flex: 1;">
+            <h1 style="color: var(--primary-red); font-size: 1.5rem; margin-bottom: 0.5rem; text-align: left;">
+              心桥·缘梦
+            </h1>
+            <h2 style="color: var(--gray-600); font-size: 0.9rem; text-align: left;">
+              常州地区热门的脱单平台
+            </h2>
           </div>
-          <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <div style="width: 40px; height: 40px; background: var(--gradient-secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem;">🎯</div>
-            <div>
-              <h3 style="font-size: 1rem; color: var(--gray-800); margin-bottom: 0.25rem;">精准匹配</h3>
-              <p style="font-size: 0.85rem; color: var(--gray-600);">智能算法推荐，找到最适合的你</p>
-            </div>
-          </div>
-          <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <div style="width: 40px; height: 40px; background: var(--gradient-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem;">🌟</div>
-            <div>
-              <h3 style="font-size: 1rem; color: var(--gray-800); margin-bottom: 0.25rem;">丰富活动</h3>
-              <p style="font-size: 0.85rem; color: var(--gray-600);">定期举办线下活动，增进了解</p>
-            </div>
+          <!-- 右侧图片区域 -->
+          <div style="flex: 1; text-align: center;">
+            <img src="/uploads/marry.png" alt="婚礼图标" style="max-width: 150px; height: auto; border-radius: var(--radius-lg);">
           </div>
         </div>
       </div>
@@ -71,31 +49,30 @@
       <!-- 性别选择 -->
       <div class="card fade-in-up">
         <div class="card-header" style="text-align: center; display: block;">
-          <h2 style="font-size: 1.4rem; color: var(--gray-800); margin-bottom: 0.5rem;">您想找他?还是找她?</h2>
+          <h2 style="font-size: 1.4rem; color: var(--gray-800); margin-bottom: 0.5rem;">您想找男生?还是找女生?</h2>
           <p style="color: var(--gray-500); font-size: 0.9rem;">登记资料后,推荐才能更精准</p>
         </div>
         <div style="display: flex; justify-content: space-around; gap: 1rem; margin-top: 1.5rem;">
           <!-- 男孩区域 -->
-          <div style="text-align: center; cursor: pointer;" @click="toggleSection('male')">
-            <div style="width: 120px; height: 120px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 0.75rem; border: 3px solid var(--purple-300);">
+          <div style="text-align: center;">
+            <div style="width: 120px; height: 120px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 0.75rem; border: 3px solid var(--purple-300); cursor: pointer;" @click="goToProfile">
               <img src="/uploads/male.jpg" alt="男孩" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
             <span style="background: linear-gradient(to right, #8A2BE2, #A569BD); color: white; padding: 0.5rem 1.5rem; border-radius: var(--radius-full); font-size: 1rem;">男孩</span>
           </div>
           <!-- 女孩区域 -->
-          <div style="text-align: center; cursor: pointer;" @click="toggleSection('female')">
-            <div style="width: 120px; height: 120px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 0.75rem; border: 3px solid var(--red-300);">
+          <div style="text-align: center;">
+            <div style="width: 120px; height: 120px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 0.75rem; border: 3px solid var(--red-300); cursor: pointer;" @click="goToProfile">
               <img src="/uploads/female.jpg" alt="女孩" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
             <span style="background: linear-gradient(to right, #FF6B6B, #FF8E8E); color: white; padding: 0.5rem 1.5rem; border-radius: var(--radius-full); font-size: 1rem;">女孩</span>
           </div>
         </div>
         
-        <!-- 男孩展开区域 -->
-        <div v-if="expandedSection === 'male'" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-200);">
-          <h3 style="color: var(--purple-600); margin-bottom: 1rem; text-align: center;">🎯 最新男孩推荐</h3>
+        <!-- 男孩推荐区域 -->
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-200);">
           <div v-if="maleUsers.length > 0" style="display: grid; gap: 1rem;">
-            <div v-for="user in maleUsers" :key="user.id" 
+            <div v-for="user in maleUsers.slice(0, 2)" :key="user.id" 
                  style="border: 1px solid var(--purple-200); border-radius: var(--radius-lg); padding: 1rem; background: linear-gradient(135deg, #f5f3ff, #ede9fe);">
               <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
                 <div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; border: 2px solid var(--purple-300);">
@@ -130,11 +107,10 @@
           </div>
         </div>
         
-        <!-- 女孩展开区域 -->
-        <div v-if="expandedSection === 'female'" style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-200);">
-          <h3 style="color: var(--red-600); margin-bottom: 1rem; text-align: center;">💝 最新女孩推荐</h3>
+        <!-- 女孩推荐区域 -->
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-200);">
           <div v-if="femaleUsers.length > 0" style="display: grid; gap: 1rem;">
-            <div v-for="user in femaleUsers" :key="user.id" 
+            <div v-for="user in femaleUsers.slice(0, 2)" :key="user.id" 
                  style="border: 1px solid var(--red-200); border-radius: var(--radius-lg); padding: 1rem; background: linear-gradient(135deg, #fef2f2, #fee2e2);">
               <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
                 <div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; border: 2px solid var(--red-300);">
@@ -224,14 +200,18 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { activityService } from '../services/index.js'
 import { userService } from '../services/index.js'
 
+const router = useRouter()
 const activities = ref([])
 const maleUsers = ref([])
 const femaleUsers = ref([])
 const expandedSection = ref('')
 const currentUser = ref(null)
+
+
 
 const fetchActivities = async () => {
   try {
@@ -253,6 +233,10 @@ const fetchUsersByGender = async (gender, limit = 1) => {
   } catch (error) {
     console.error(`Failed to fetch ${gender} users:`, error)
   }
+}
+
+const goToProfile = () => {
+  router.push('/profile')
 }
 
 const toggleSection = async (section) => {
@@ -289,9 +273,13 @@ const fetchCurrentUser = async () => {
   }
 }
 
-onMounted(() => {
-  fetchActivities()
-  fetchCurrentUser()
+onMounted(async () => {
+  await fetchActivities()
+  // 自动获取男孩和女孩推荐
+  await fetchUsersByGender('男', 2)
+  await fetchUsersByGender('女', 2)
+  // 获取当前用户信息
+  await fetchCurrentUser()
 })
 </script>
 

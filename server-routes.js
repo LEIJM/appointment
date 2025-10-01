@@ -406,6 +406,28 @@ export function setupRoutes(app) {
     })
   })
 
+  // 获取单个活动详情（公开访问，无需认证）
+  app.get('/api/activities/:id/public', (req, res) => {
+    const activityId = req.params.id
+    
+    db.get(`SELECT a.*, GROUP_CONCAT(ap.photo_url) as photos,
+            CASE WHEN datetime('now') <= datetime(a.registration_deadline) THEN 1 ELSE 0 END as can_register
+            FROM activities a
+            LEFT JOIN activity_photos ap ON a.id = ap.activity_id
+            WHERE a.id = ? AND a.status = 1
+            GROUP BY a.id`, [activityId], (err, row) => {
+      if (err) {
+        return res.status(500).json({ error: err.message })
+      }
+      if (!row) {
+        return res.status(404).json({ error: 'Activity not found' })
+      }
+      // 移除用户相关的字段
+      delete row.is_registered
+      res.json(row)
+    })
+  })
+
   // 管理员活动路由
   app.get('/api/admin/activities', authenticateToken, requireAdmin, (req, res) => {
     db.all(`SELECT 

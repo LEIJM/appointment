@@ -48,13 +48,13 @@ const routes = [
     path: '/activities',
     name: 'Activities',
     component: Activities,
-    meta: { title: '活动列表 - 缘梦', requiresAuth: true }
+    meta: { title: '活动列表 - 缘梦' }
   },
   {
     path: '/activities/:id',
     name: 'ActivityDetails',
     component: ActivityDetails,
-    meta: { title: '活动详情 - 缘梦', requiresAuth: true }
+    meta: { title: '活动详情 - 缘梦' }
   },
   {
     path: '/admin',

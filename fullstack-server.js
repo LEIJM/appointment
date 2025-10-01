@@ -49,8 +49,9 @@ async function startBackend() {
   await setupBackend()
   
   return new Promise((resolve) => {
-    const server = app.listen(PORT, () => {
+    const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Backend server running on http://localhost:${PORT}`)
+      console.log(`🌐 Backend server accessible on network: http://0.0.0.0:${PORT}`)
       resolve(server)
     })
   })
@@ -60,7 +61,7 @@ async function startBackend() {
 async function startFrontend() {
   console.log('🔄 Starting frontend development server...')
   
-  const viteProcess = spawn('node', ['node_modules/vite/bin/vite.js', '--port', FRONTEND_PORT], {
+  const viteProcess = spawn('node', ['node_modules/vite/bin/vite.js', '--port', FRONTEND_PORT, '--host', '0.0.0.0'], {
     stdio: 'inherit',
     shell: true,
     cwd: __dirname
@@ -97,8 +98,11 @@ async function main() {
     console.log('='.repeat(50))
     console.log('🎉 Fullstack application started successfully!')
     console.log(`📱 Frontend: http://localhost:${FRONTEND_PORT}`)
+    console.log(`🌐 Frontend network: http://0.0.0.0:${FRONTEND_PORT}`)
     console.log(`🔧 Backend API: http://localhost:${PORT}/api`)
+    console.log(`🌐 Backend API network: http://0.0.0.0:${PORT}/api`)
     console.log(`👨‍💻 Admin: http://localhost:${FRONTEND_PORT}/admin (admin/admin123)`)
+    console.log(`📱 Admin network: http://0.0.0.0:${FRONTEND_PORT}/admin (admin/admin123)`)
     console.log('=' .repeat(50))
     
     // 优雅关闭处理

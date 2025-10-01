@@ -152,7 +152,7 @@ const currentUser = ref(null)
 
 const fetchActivities = async () => {
   try {
-    const response = await activityService.getActivities()
+    const response = await activityService.getPublicActivities()
     activities.value = response
   } catch (error) {
     console.error('Failed to fetch activities:', error)

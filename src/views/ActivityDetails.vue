@@ -158,8 +158,13 @@ const currentUser = ref(null)
 const fetchActivityDetails = async () => {
   try {
     const activityId = route.params.id
+    const token = localStorage.getItem('token')
     
-    const response = await activityService.getActivityById(activityId)
+    // 如果用户已登录，使用需要认证的接口获取详细信息（包含报名状态）
+    // 如果用户未登录，使用公开接口获取基本信息
+    const response = token 
+      ? await activityService.getActivityById(activityId)
+      : await activityService.getPublicActivityById(activityId)
     
     activity.value = response
   } catch (err) {
@@ -172,6 +177,14 @@ const fetchActivityDetails = async () => {
 
 const handleRegistration = async () => {
   if (!activity.value.can_register || activity.value.is_registered) {
+    return
+  }
+
+  // 检查用户是否登录
+  const token = localStorage.getItem('token')
+  if (!token) {
+    // 未登录，跳转到登录页面
+    router.push('/login')
     return
   }
 

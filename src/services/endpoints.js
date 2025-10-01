@@ -19,6 +19,7 @@ export const API_ENDPOINTS = {
     BASE: '/activities',
     DETAILS: (id) => `/activities/${id}`,
     PUBLIC: '/activities/public',
+    PUBLIC_DETAILS: (id) => `/activities/${id}/public`,
     REGISTER: (id) => `/activities/${id}/register`,
     CANCEL_REGISTRATION: (id) => `/activities/${id}/register`,
     REGISTRATIONS: (id) => `/activities/${id}/registrations`
