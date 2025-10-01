@@ -148,7 +148,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import { userService } from '../services/index.js'
 
 const router = useRouter()
 const userInfo = ref({})
@@ -168,20 +168,15 @@ const expectationsComplete = computed(() => {
 
 const fetchUserInfo = async () => {
   try {
-    const token = localStorage.getItem('token')
     const userId = localStorage.getItem('userId')
     
     // Fetch basic user info
-    const userResponse = await axios.get(`http://localhost:3001/api/users/${userId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
-    userInfo.value = userResponse.data
+    const userResponse = await userService.getUserById(userId)
+    userInfo.value = userResponse
     
     // Fetch detailed user info
-    if (userResponse.data.user_id) {
-      userDetails.value = userResponse.data
+    if (userResponse.user_id) {
+      userDetails.value = userResponse
     }
     
   } catch (error) {

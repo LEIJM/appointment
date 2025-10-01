@@ -77,7 +77,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import { userService } from '../services/index.js'
 
 const router = useRouter()
 
@@ -94,12 +94,7 @@ const handleLogin = async () => {
   error.value = ''
   
   try {
-    const response = await axios.post('http://localhost:3001/api/login', {
-      username: form.value.username,
-      password: form.value.password
-    })
-    
-    const { token, user } = response.data
+    const { token, user } = await userService.login(form.value.username, form.value.password)
     
     // Store token and user info
     localStorage.setItem('token', token)

@@ -178,7 +178,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import { adminService } from '../../services/index.js'
 
 const router = useRouter()
 const adminName = ref('Admin')
@@ -193,43 +193,34 @@ const recentUsers = ref([])
 
 const fetchDashboardData = async () => {
   try {
-    const token = localStorage.getItem('token')
-    if (!token) {
+    if (!localStorage.getItem('token')) {
       router.push('/login')
       return
     }
 
     const requests = [
-      axios.get('http://localhost:3001/api/admin/stats/users', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      }),
-      axios.get('http://localhost:3001/api/admin/stats/activities', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      }),
-      axios.get('http://localhost:3001/api/admin/users/recent', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      }),
-      axios.get('http://localhost:3001/api/admin/activities/recent', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      })
+      adminService.getUserStats(),
+      adminService.getActivityStats(),
+      adminService.getRecentUsers(),
+      adminService.getRecentActivities()
     ]
 
     const [usersRes, activitiesRes, recentUsersRes, recentActivitiesRes] = await Promise.allSettled(requests)
 
     if (usersRes.status === 'fulfilled') {
-      stats.value = usersRes.value.data
+      stats.value = usersRes.value
     } else {
       console.error('users stats failed:', usersRes.reason)
     }
 
     if (recentUsersRes.status === 'fulfilled') {
-      recentUsers.value = recentUsersRes.value.data
+      recentUsers.value = recentUsersRes.value
     } else {
       console.error('recent users failed:', recentUsersRes.reason)
     }
 
     if (recentActivitiesRes.status === 'fulfilled') {
-      recentActivities.value = recentActivitiesRes.value.data
+      recentActivities.value = recentActivitiesRes.value
     } else {
       console.error('recent activities failed:', recentActivitiesRes.reason)
     }

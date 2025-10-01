@@ -141,7 +141,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import { activityService } from '../services/index.js'
+import { userService } from '../services/index.js'
 
 const router = useRouter()
 const activities = ref([])
@@ -151,13 +152,8 @@ const currentUser = ref(null)
 
 const fetchActivities = async () => {
   try {
-    const token = localStorage.getItem('token')
-    const response = await axios.get('http://localhost:3001/api/activities', {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
-    activities.value = response.data
+    const response = await activityService.getActivities()
+    activities.value = response
   } catch (error) {
     console.error('Failed to fetch activities:', error)
   } finally {
@@ -204,16 +200,11 @@ const viewActivityDetails = (activity) => {
 
 const fetchCurrentUser = async () => {
   try {
-    const token = localStorage.getItem('token')
     const userId = localStorage.getItem('userId')
     
-    if (token && userId) {
-      const response = await axios.get(`http://localhost:3001/api/users/${userId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      currentUser.value = response.data
+    if (userId) {
+      const response = await userService.getUserById(userId)
+      currentUser.value = response
     }
   } catch (error) {
     console.error('Failed to fetch current user:', error)

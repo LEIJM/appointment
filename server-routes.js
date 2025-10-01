@@ -57,6 +57,56 @@ export function setupRoutes(app) {
   // 静态文件服务
   app.use('/uploads', express.static('uploads'))
   
+  // API文档路由
+  app.get(['/', '/api'], (req, res) => {
+    res.json({
+      message: '欢迎来到相亲交友平台 API',
+      version: '1.0.0',
+      description: '这是一个完整的相亲交友平台后端API服务',
+      endpoints: {
+        auth: {
+          login: 'POST /api/login - 用户登录',
+          register: 'POST /api/register - 用户注册'
+        },
+        users: {
+          getAll: 'GET /api/users - 获取所有用户（需要认证）',
+          getById: 'GET /api/users/:id - 获取指定用户详情（需要认证）',
+          updateDetails: 'PUT /api/users/:id/details - 更新用户详情（需要认证）',
+          getLatestByGender: 'GET /api/users/latest/:gender - 按性别获取最新用户'
+        },
+        activities: {
+          getAll: 'GET /api/activities - 获取所有活动（需要认证）',
+          getPublic: 'GET /api/activities/public - 获取公开活动列表',
+          create: 'POST /api/activities - 创建活动（管理员）',
+          update: 'PUT /api/activities/:id - 更新活动（管理员）',
+          delete: 'DELETE /api/activities/:id - 删除活动（管理员）',
+          toggleStatus: 'PUT /api/activities/:id/status - 切换活动状态（管理员）',
+          getRegistrations: 'GET /api/activities/:id/registrations - 获取活动报名列表（管理员）'
+        },
+        admin: {
+          getUsers: 'GET /api/admin/users - 获取用户列表（管理员）',
+          updateUser: 'PUT /api/admin/users/:id - 更新用户信息（管理员）',
+          deleteUser: 'DELETE /api/admin/users/:id - 删除用户（管理员）',
+          verifyUser: 'PUT /api/admin/users/:id/verify - 审核用户（管理员）',
+          createUser: 'POST /api/admin/users - 创建用户（管理员）'
+        }
+      },
+      authentication: {
+        type: 'JWT Token',
+        header: 'Authorization: Bearer <token>',
+        login: '使用 /api/login 获取token'
+      },
+      admin: {
+        defaultCredentials: '用户名: admin',
+        access: '管理员可以访问所有管理端点'
+      },
+      database: 'SQLite',
+      server: 'Node.js + Express',
+      frontend: 'Vue.js 3',
+      documentation: '访问 /api 获取此文档'
+    });
+  });
+  
   // 认证路由
   app.post('/api/login', (req, res) => {
     const { username, password } = req.body

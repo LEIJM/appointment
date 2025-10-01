@@ -145,7 +145,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import axios from 'axios'
+import { activityService } from '../services/index.js'
+import { userService } from '../services/index.js'
 
 const router = useRouter()
 const route = useRoute()
@@ -157,15 +158,10 @@ const currentUser = ref(null)
 const fetchActivityDetails = async () => {
   try {
     const activityId = route.params.id
-    const token = localStorage.getItem('token')
     
-    const response = await axios.get(`http://localhost:3001/api/activities/${activityId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
+    const response = await activityService.getActivityById(activityId)
     
-    activity.value = response.data
+    activity.value = response
   } catch (err) {
     console.error('Failed to fetch activity details:', err)
     error.value = err.response?.data?.error || '获取活动详情失败'
@@ -181,13 +177,8 @@ const handleRegistration = async () => {
 
   try {
     const activityId = route.params.id
-    const token = localStorage.getItem('token')
     
-    const response = await axios.post(`http://localhost:3001/api/activities/${activityId}/register`, {}, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
+    await activityService.registerForActivity(activityId)
     
     alert('报名成功！')
     // 重新获取活动详情以更新状态
@@ -217,16 +208,11 @@ const getStatusText = (dateString) => {
 
 const fetchCurrentUser = async () => {
   try {
-    const token = localStorage.getItem('token')
     const userId = localStorage.getItem('userId')
     
-    if (token && userId) {
-      const response = await axios.get(`http://localhost:3001/api/users/${userId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      currentUser.value = response.data
+    if (userId) {
+      const response = await userService.getUserById(userId)
+      currentUser.value = response
     }
   } catch (error) {
     console.error('Failed to fetch current user:', error)

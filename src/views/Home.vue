@@ -224,7 +224,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import { activityService } from '../services/index.js'
+import { userService } from '../services/index.js'
 
 const activities = ref([])
 const maleUsers = ref([])
@@ -234,8 +235,8 @@ const currentUser = ref(null)
 
 const fetchActivities = async () => {
   try {
-    const response = await axios.get('http://localhost:3001/api/activities/public')
-    activities.value = response.data
+    const response = await activityService.getPublicActivities()
+    activities.value = response
   } catch (error) {
     console.error('Failed to fetch activities:', error)
   }
@@ -243,11 +244,11 @@ const fetchActivities = async () => {
 
 const fetchUsersByGender = async (gender, limit = 1) => {
   try {
-    const response = await axios.get(`http://localhost:3001/api/users/latest/${gender}?limit=${limit}`)
+    const response = await userService.getLatestUsersByGender(gender, limit)
     if (gender === '男') {
-      maleUsers.value = response.data
+      maleUsers.value = response
     } else {
-      femaleUsers.value = response.data
+      femaleUsers.value = response
     }
   } catch (error) {
     console.error(`Failed to fetch ${gender} users:`, error)
@@ -274,16 +275,11 @@ const formatDate = (dateString) => {
 
 const fetchCurrentUser = async () => {
   try {
-    const token = localStorage.getItem('token')
     const userId = localStorage.getItem('userId')
     
-    if (token && userId) {
-      const response = await axios.get(`http://localhost:3001/api/users/${userId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      currentUser.value = response.data
+    if (userId) {
+      const response = await userService.getUserById(userId)
+      currentUser.value = response
     }
   } catch (error) {
     console.error('Failed to fetch current user:', error)

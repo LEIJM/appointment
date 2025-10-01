@@ -304,7 +304,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import { userService } from '../services/index.js'
 
 const router = useRouter()
 const saving = ref(false)
@@ -350,19 +350,14 @@ const form = ref({
 
 const fetchUserDetails = async () => {
   try {
-    const token = localStorage.getItem('token')
     const userId = localStorage.getItem('userId')
     
-    const response = await axios.get(`http://localhost:3001/api/users/${userId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
+    const response = await userService.getUserById(userId)
     
     // Populate form with existing data
     Object.keys(form.value).forEach(key => {
-      if (response.data[key] !== null && response.data[key] !== undefined) {
-        form.value[key] = response.data[key]
+      if (response[key] !== null && response[key] !== undefined) {
+        form.value[key] = response[key]
       }
     })
     
@@ -411,7 +406,6 @@ const saveDetails = async () => {
   message.value = ''
   
   try {
-    const token = localStorage.getItem('token')
     const userId = localStorage.getItem('userId')
     
     // 创建表单数据
@@ -430,12 +424,7 @@ const saveDetails = async () => {
     })
     
     // 一次性提交所有数据
-    await axios.put(`http://localhost:3001/api/users/${userId}/details`, formData, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data'
-      }
-    })
+    await userService.updateUserDetails(userId, formData)
     
     message.value = '资料保存成功！'
     messageType.value = 'success'

@@ -301,7 +301,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import { adminService } from '../../services/index.js'
 
 const router = useRouter()
 const loading = ref(false)
@@ -342,10 +342,7 @@ const totalPages = computed(() => {
 const fetchUsers = async () => {
   loading.value = true
   try {
-    const token = localStorage.getItem('token')
-    const response = await axios.get('http://localhost:3001/api/admin/users', {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
+    const response = await adminService.getAllUsers()
     users.value = response.data
     filteredUsers.value = response.data
   } catch (error) {
@@ -403,11 +400,8 @@ const editUser = (user) => {
 
 const toggleVerification = async (user) => {
   try {
-    const token = localStorage.getItem('token')
-    await axios.put(`http://localhost:3001/api/admin/users/${user.id}/verification`, {
+    await adminService.updateUserVerification(user.id, {
       is_verified: !user.is_verified
-    }, {
-      headers: { 'Authorization': `Bearer ${token}` }
     })
     
     user.is_verified = !user.is_verified
@@ -424,10 +418,7 @@ const deleteUser = async (user) => {
   }
   
   try {
-    const token = localStorage.getItem('token')
-    await axios.delete(`http://localhost:3001/api/admin/users/${user.id}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
+    await adminService.deleteUser(user.id)
     
     // Remove user from lists
     users.value = users.value.filter(u => u.id !== user.id)
@@ -463,7 +454,6 @@ const closeCreateModal = () => {
 const saveUser = async () => {
   saving.value = true
   try {
-    const token = localStorage.getItem('token')
     const formData = { ...userForm.value }
     
     // Remove password field if empty during edit
@@ -471,15 +461,10 @@ const saveUser = async () => {
       delete formData.password
     }
     
-    let response
     if (showEditModal.value) {
-      response = await axios.put(`http://localhost:3001/api/admin/users/${formData.id}`, formData, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      })
+      await adminService.updateUser(formData.id, formData)
     } else {
-      response = await axios.post('http://localhost:3001/api/admin/users', formData, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      })
+      await adminService.createUser(formData)
     }
     
     // Refresh user list

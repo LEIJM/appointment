@@ -485,7 +485,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import { adminService } from '../../services/index.js'
 
 const router = useRouter()
 const loading = ref(false)
@@ -532,10 +532,7 @@ const totalPages = computed(() => {
 const fetchActivities = async () => {
   loading.value = true
   try {
-    const token = localStorage.getItem('token')
-    const response = await axios.get('http://localhost:3001/api/admin/activities', {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
+    const response = await adminService.getAllActivities()
     
     // 确保数据完整性
     activities.value = response.data.map(activity => {
@@ -617,8 +614,6 @@ const createActivity = async () => {
   creating.value = true
   
   try {
-    const token = localStorage.getItem('token')
-    
     // Create FormData to handle file uploads
     const formData = new FormData()
     
@@ -637,21 +632,11 @@ const createActivity = async () => {
     // Use different endpoint for create vs update
     if (isEditing.value && selectedActivity.value) {
       // Update existing activity
-      await axios.put(`http://localhost:3001/api/admin/activities/${selectedActivity.value.id}`, formData, {
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      })
+      await adminService.updateActivity(selectedActivity.value.id, formData)
       alert('活动更新成功！')
     } else {
       // Create new activity
-      await axios.post('http://localhost:3001/api/admin/activities/create', formData, {
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      })
+      await adminService.createActivity(formData)
       alert('活动创建成功！')
     }
     
@@ -671,10 +656,7 @@ const viewActivity = async (activity) => {
   showActivityModal.value = true
   selectedRegistrations.value = []
   try {
-    const token = localStorage.getItem('token')
-    const res = await axios.get(`http://localhost:3001/api/activities/${activity.id}/registrations`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
+    const res = await adminService.getActivityRegistrations(activity.id)
     selectedRegistrations.value = res.data || []
     // 同步更新当前报名人数，避免列表数据延迟导致弹窗显示为0
     selectedActivity.value.current_participants = selectedRegistrations.value.length
@@ -704,14 +686,9 @@ const editActivity = (activity) => {
 
 const toggleActivityStatus = async (activity) => {
   try {
-    const token = localStorage.getItem('token')
     const newStatus = activity.status === 'cancelled' ? 'upcoming' : 'cancelled'
     
-    await axios.put(`http://localhost:3001/api/admin/activities/${activity.id}/status`, {
-      status: newStatus
-    }, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
+    await adminService.updateActivityStatus(activity.id, { status: newStatus })
     
     activity.status = newStatus
     
@@ -751,10 +728,7 @@ const deleteActivity = async (activity) => {
   if (!confirmed) return
   
   try {
-    const token = localStorage.getItem('token')
-    await axios.delete(`http://localhost:3001/api/admin/activities/${activity.id}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
+    await adminService.deleteActivity(activity.id)
     
     // Remove activity from lists
     activities.value = activities.value.filter(a => a.id !== activity.id)
