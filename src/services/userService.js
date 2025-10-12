@@ -42,5 +42,11 @@ export const userService = {
       params: { limit }
     })
     return response.data
+  },
+
+  // 批量更新用户信息（用于onboarding流程）
+  async batchUpdateUserInfo(userData) {
+    const response = await api.put(API_ENDPOINTS.USERS.UPDATE_BATCH, userData)
+    return response.data
   }
 }

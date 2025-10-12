@@ -12,6 +12,14 @@ import ActivityDetails from '../views/ActivityDetails.vue'
 import AdminDashboard from '../views/admin/Dashboard.vue'
 import AdminUsers from '../views/admin/Users.vue'
 import AdminActivities from '../views/admin/Activities.vue'
+import OnboardingStep1 from '../views/onboarding/OnboardingStep1.vue'
+import OnboardingStep2 from '../views/onboarding/OnboardingStep2.vue'
+import OnboardingStep3 from '../views/onboarding/OnboardingStep3.vue'
+import OnboardingStep4 from '../views/onboarding/OnboardingStep4.vue'
+import OnboardingStep5 from '../views/onboarding/OnboardingStep5.vue'
+import OnboardingStep6 from '../views/onboarding/OnboardingStep6.vue'
+import OnboardingStep7 from '../views/onboarding/OnboardingStep7.vue'
+import QuickRegister from '../views/onboarding/QuickRegister.vue'
 
 const routes = [
   {
@@ -73,6 +81,56 @@ const routes = [
     name: 'AdminActivities',
     component: AdminActivities,
     meta: { title: '活动管理 - 缘梦', requiresAuth: true, requiresAdmin: true }
+  },
+
+  // 多步骤信息收集路由
+  {
+    path: '/onboarding/step1',
+    name: 'OnboardingStep1',
+    component: OnboardingStep1,
+    meta: { title: '选择性别' }
+  },
+  {
+    path: '/onboarding/step2',
+    name: 'OnboardingStep2',
+    component: OnboardingStep2,
+    meta: { title: '选择年龄' }
+  },
+  {
+    path: '/onboarding/step3',
+    name: 'OnboardingStep3',
+    component: OnboardingStep3,
+    meta: { title: '选择地区' }
+  },
+  {
+    path: '/onboarding/step4',
+    name: 'OnboardingStep4',
+    component: OnboardingStep4,
+    meta: { title: '选择学历' }
+  },
+  {
+    path: '/onboarding/step5',
+    name: 'OnboardingStep5',
+    component: OnboardingStep5,
+    meta: { title: '选择职业' }
+  },
+  {
+    path: '/onboarding/step6',
+    name: 'OnboardingStep6',
+    component: OnboardingStep6,
+    meta: { title: '选择收入' }
+  },
+  {
+    path: '/onboarding/step7',
+    name: 'OnboardingStep7',
+    component: OnboardingStep7,
+    meta: { title: '选择身高' }
+  },
+  {
+    path: '/onboarding/register',
+    name: 'QuickRegister',
+    component: QuickRegister,
+    meta: { title: '快速注册' }
   },
   {
     path: '/admin/reports',

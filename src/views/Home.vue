@@ -55,17 +55,17 @@
         <div style="display: flex; justify-content: space-around; gap: 1rem; margin-top: 1.5rem;">
           <!-- 男孩区域 -->
           <div style="text-align: center;">
-            <div style="width: 120px; height: 120px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 0.75rem; border: 3px solid var(--purple-300); cursor: pointer;" @click="goToProfile">
+            <div style="width: 120px; height: 120px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 0.75rem; border: 3px solid var(--purple-300); cursor: pointer;" @click="handleGenderSelection('male')">
               <img src="/uploads/male.jpg" alt="男孩" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
-            <span style="background: linear-gradient(to right, #8A2BE2, #A569BD); color: white; padding: 0.5rem 1.5rem; border-radius: var(--radius-full); font-size: 1rem;">男孩</span>
+            <span style="background: linear-gradient(to right, #8A2BE2, #A569BD); color: white; padding: 0.5rem 1.5rem; border-radius: var(--radius-full); font-size: 1rem; cursor: pointer;" @click="handleGenderSelection('male')">男孩</span>
           </div>
           <!-- 女孩区域 -->
           <div style="text-align: center;">
-            <div style="width: 120px; height: 120px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 0.75rem; border: 3px solid var(--red-300); cursor: pointer;" @click="goToProfile">
+            <div style="width: 120px; height: 120px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 0.75rem; border: 3px solid var(--red-300); cursor: pointer;" @click="handleGenderSelection('female')">
               <img src="/uploads/female.jpg" alt="女孩" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
-            <span style="background: linear-gradient(to right, #FF6B6B, #FF8E8E); color: white; padding: 0.5rem 1.5rem; border-radius: var(--radius-full); font-size: 1rem;">女孩</span>
+            <span style="background: linear-gradient(to right, #FF6B6B, #FF8E8E); color: white; padding: 0.5rem 1.5rem; border-radius: var(--radius-full); font-size: 1rem; cursor: pointer;" @click="handleGenderSelection('female')">女孩</span>
           </div>
         </div>
         
@@ -203,6 +203,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { activityService } from '../services/index.js'
 import { userService } from '../services/index.js'
+import { useOnboardingStore } from '../stores/onboarding.js'
 
 const router = useRouter()
 const activities = ref([])
@@ -210,6 +211,7 @@ const maleUsers = ref([])
 const femaleUsers = ref([])
 const expandedSection = ref('')
 const currentUser = ref(null)
+const onboardingStore = useOnboardingStore()
 
 
 
@@ -237,6 +239,15 @@ const fetchUsersByGender = async (gender, limit = 1) => {
 
 const goToProfile = () => {
   router.push('/profile')
+}
+
+// 性别选择点击事件
+const handleGenderSelection = (gender) => {
+  // 开始onboarding流程，传入选择的性别
+  onboardingStore.startOnboarding({ gender })
+  
+  // 跳转到步骤1页面
+  router.push('/onboarding/step1')
 }
 
 const toggleSection = async (section) => {

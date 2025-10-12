@@ -11,7 +11,8 @@ export const API_ENDPOINTS = {
     BASE: '/users',
     DETAILS: (id) => `/users/${id}`,
     UPDATE_DETAILS: (id) => `/users/${id}/details`,
-    LATEST_BY_GENDER: (gender) => `/users/latest/${gender}`
+    LATEST_BY_GENDER: (gender) => `/users/latest/${gender}`,
+    UPDATE_BATCH: '/users/batch-update'
   },
   
   // 活动相关

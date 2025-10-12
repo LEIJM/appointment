@@ -245,6 +245,16 @@ app.post('/api/login', (req, res) => {
 
 app.post('/api/register', (req, res) => {
   const { username, password } = req.body;
+  
+  // 验证输入参数
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username and password are required' });
+  }
+  
+  if (password.length < 6) {
+    return res.status(400).json({ error: 'Password must be at least 6 characters long' });
+  }
+  
   const hashedPassword = bcrypt.hashSync(password, 10);
   
   db.run('INSERT INTO users (username, password) VALUES (?, ?)', [username, hashedPassword], function(err) {
