@@ -532,10 +532,13 @@ const totalPages = computed(() => {
 const fetchActivities = async () => {
   loading.value = true
   try {
-    const response = await adminService.getAllActivities()
+    const response = await adminService.getActivities()
+    
+    // adminService.getActivities() 已经返回 response.data，所以 response 就是活动数组
+    const activityData = Array.isArray(response) ? response : (response || [])
     
     // 确保数据完整性
-    activities.value = response.data.map(activity => {
+    activities.value = activityData.map(activity => {
       // 后端返回的是 a.* + photos + status（字符串）
       // 统一映射到当前前端所需的字段命名
       return {
@@ -563,6 +566,9 @@ const fetchActivities = async () => {
     if (error.response?.status === 401) {
       router.push('/login')
     }
+    // 出错时设置为空数组
+    activities.value = []
+    filteredActivities.value = []
   } finally {
     loading.value = false
   }

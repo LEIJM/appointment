@@ -8,6 +8,7 @@ import Register from '../views/Register.vue'
 import Profile from '../views/Profile.vue'
 import UserDetails from '../views/UserDetails.vue'
 import Activities from '../views/Activities.vue'
+import PastActivities from '../views/PastActivities.vue'
 import ActivityDetails from '../views/ActivityDetails.vue'
 import AdminDashboard from '../views/admin/Dashboard.vue'
 import AdminUsers from '../views/admin/Users.vue'
@@ -57,6 +58,12 @@ const routes = [
     name: 'Activities',
     component: Activities,
     meta: { title: '活动列表 - 缘梦' }
+  },
+  {
+    path: '/past-activities',
+    name: 'PastActivities',
+    component: PastActivities,
+    meta: { title: '往期活动回顾 - 缘梦' }
   },
   {
     path: '/activities/:id',

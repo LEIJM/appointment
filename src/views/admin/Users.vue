@@ -342,14 +342,19 @@ const totalPages = computed(() => {
 const fetchUsers = async () => {
   loading.value = true
   try {
-    const response = await adminService.getAllUsers()
-    users.value = response.data
-    filteredUsers.value = response.data
+    const response = await adminService.getUsers()
+    // adminService.getUsers() 已经返回 response.data，所以 response 就是用户数组
+    const userData = Array.isArray(response) ? response : (response || [])
+    users.value = userData
+    filteredUsers.value = userData
   } catch (error) {
     console.error('Failed to fetch users:', error)
     if (error.response?.status === 401) {
       router.push('/login')
     }
+    // 出错时设置为空数组
+    users.value = []
+    filteredUsers.value = []
   } finally {
     loading.value = false
   }

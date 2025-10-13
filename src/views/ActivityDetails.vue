@@ -49,39 +49,39 @@
         </div>
 
         <!-- 活动基本信息 -->
-        <div class="card">
+        <div class="card fade-in-up">
           <div class="card-header">
             <span style="font-size: 1.2rem;">📅</span>
             活动信息
           </div>
           <div style="display: grid; gap: 1rem;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="font-weight: 600;">活动状态：</span>
+              <span style="font-weight: 500; color: var(--gray-700);">活动状态：</span>
               <span :class="['activity-status', getStatusClass(activity.date)]">
                 {{ getStatusText(activity.date) }}
               </span>
             </div>
             <div style="display: flex; justify-content: space-between;">
-              <span style="font-weight: 600;">活动时间：</span>
-              <span>{{ formatDate(activity.date) }}</span>
+              <span style="font-weight: 500; color: var(--gray-700);">活动时间：</span>
+              <span style="color: var(--gray-800);">{{ formatDate(activity.date) }}</span>
             </div>
             <div style="display: flex; justify-content: space-between;">
-              <span style="font-weight: 600;">活动地点：</span>
-              <span>{{ activity.location }}</span>
+              <span style="font-weight: 500; color: var(--gray-700);">活动地点：</span>
+              <span style="color: var(--gray-800);">{{ activity.location }}</span>
             </div>
             <div style="display: flex; justify-content: space-between;">
-              <span style="font-weight: 600;">报名截止：</span>
-              <span :class="{'text-danger': !activity.can_register}">
-                {{ formatDate(activity.registration_deadline) }}
-                <span v-if="!activity.can_register" style="color: var(--danger-red);"> (已截止)</span>
+              <span style="font-weight: 500; color: var(--gray-700);">报名截止：</span>
+              <span :class="{'text-danger': !activity.can_register}" style="text-align: right;">
+                <span style="color: var(--gray-800);">{{ formatDate(activity.registration_deadline) }}</span>
+                <span v-if="!activity.can_register" style="color: var(--danger-red); display: block; font-size: 0.8rem;">报名已截止</span>
                 <div v-else-if="countdown" style="color: var(--primary-red); font-size: 0.8rem; margin-top: 0.2rem;">
                   {{ countdown }}
                 </div>
               </span>
             </div>
             <div style="display: flex; justify-content: space-between;">
-              <span style="font-weight: 600;">参与人数：</span>
-              <span>
+              <span style="font-weight: 500; color: var(--gray-700);">参与人数：</span>
+              <span style="color: var(--gray-800);">
                 {{ activity.registration_count || 0 }} / {{ activity.max_participants || '不限' }}
                 <span v-if="activity.max_participants && activity.registration_count >= activity.max_participants" 
                       style="color: var(--danger-red); margin-left: 0.5rem;">
@@ -90,26 +90,28 @@
               </span>
             </div>
             <div>
-              <span style="font-weight: 600;">活动描述：</span>
-              <p style="margin-top: 0.5rem; color: var(--gray-600);">{{ activity.details }}</p>
+              <span style="font-weight: 500; color: var(--gray-700); display: block; margin-bottom: 0.5rem;">活动描述：</span>
+              <p style="color: var(--gray-600); line-height: 1.5;">{{ activity.details }}</p>
             </div>
             <div v-if="activity.notes">
-              <span style="font-weight: 600;">备注信息：</span>
-              <p style="margin-top: 0.5rem; color: var(--gray-600);">{{ activity.notes }}</p>
+              <span style="font-weight: 500; color: var(--gray-700); display: block; margin-bottom: 0.5rem;">备注信息：</span>
+              <p style="color: var(--gray-600); line-height: 1.5;">{{ activity.notes }}</p>
             </div>
           </div>
         </div>
 
         <!-- 活动照片 -->
-        <div v-if="activity.photos" class="card">
+        <div v-if="activity.photos" class="card fade-in-up">
           <div class="card-header">
             <span style="font-size: 1.2rem;">📸</span>
             活动照片
           </div>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
             <div v-for="(photo, index) in activity.photos.split(',')" :key="index"
-                 style="border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 16/9; cursor: pointer;"
-                 @click="openPhotoViewer(index)">
+                 style="background: white; border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 16/9; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: all 0.2s ease;"
+                 @click="openPhotoViewer(index)"
+                 @mouseenter="$event.target.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)'; $event.target.style.transform = 'translateY(-2px)'"
+                 @mouseleave="$event.target.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)'; $event.target.style.transform = 'translateY(0)'">
               <img :src="photo" :alt="`活动照片 ${index + 1}`" 
                    style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
                    @mouseenter="$event.target.style.transform = 'scale(1.05)'"
@@ -119,24 +121,30 @@
         </div>
 
         <!-- 操作按钮 -->
-        <div class="card">
-          <div style="display: flex; gap: 1rem; justify-content: center;">
+        <div class="card fade-in-up">
+          <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
             <button 
               class="btn btn-primary" 
-              style="padding: 0.75rem 2rem;"
+              style="padding: 0.75rem 2rem; font-weight: 500; transition: all 0.2s ease;"
               @click="handleRegistration"
               :disabled="!activity.can_register || activity.is_registered"
+              @mouseenter="$event.target.style.transform = 'translateY(-1px)'"
+              @mouseleave="$event.target.style.transform = 'translateY(0)'"
             >
               {{ activity.is_registered ? '已报名' : (activity.can_register ? '立即报名' : '报名已截止') }}
             </button>
             <button 
               class="btn btn-outline" 
-              style="padding: 0.75rem 2rem;"
+              style="padding: 0.75rem 2rem; font-weight: 500; transition: all 0.2s ease;"
               @click="shareActivity"
+              @mouseenter="$event.target.style.transform = 'translateY(-1px)'"
+              @mouseleave="$event.target.style.transform = 'translateY(0)'"
             >
               📤 分享活动
             </button>
-            <router-link to="/activities" class="btn btn-outline" style="padding: 0.75rem 2rem;">
+            <router-link to="/activities" class="btn btn-outline" style="padding: 0.75rem 2rem; font-weight: 500; transition: all 0.2s ease;"
+              @mouseenter="$event.target.style.transform = 'translateY(-1px)'"
+              @mouseleave="$event.target.style.transform = 'translateY(0)'">
               返回列表
             </router-link>
           </div>
@@ -475,6 +483,32 @@ onUnmounted(() => {
   animation: fadeInUp 0.6s ease-out;
 }
 
+.card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--gray-800);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--gray-200);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -487,20 +521,28 @@ onUnmounted(() => {
 }
 
 .activity-status {
-  padding: 0.25rem 0.75rem;
-  border-radius: var(--radius-full);
-  font-size: 0.75rem;
-  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  font-weight: 500;
+  display: inline-block;
+  min-width: 3rem;
+  text-align: center;
 }
 
 .status-upcoming {
-  background: var(--primary-gold);
-  color: var(--gray-800);
+  background: var(--primary-red);
+  color: white;
+}
+
+.status-ongoing {
+  background: #10b981;
+  color: white;
 }
 
 .status-past {
-  background: var(--gray-200);
-  color: var(--gray-600);
+  background: var(--gray-300);
+  color: var(--gray-700);
 }
 
 /* 照片查看器样式 */

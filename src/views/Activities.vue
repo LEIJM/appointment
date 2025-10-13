@@ -24,98 +24,141 @@
 
     <!-- 主要内容 -->
     <div class="container" style="padding-bottom: 80px;">
-      <!-- 页面标题 -->
-      <div class="festive-bg fade-in-up" style="margin: 1rem 0; text-align: center;">
-        <h1 style="color: var(--primary-red); font-size: 1.5rem; margin-bottom: 0.5rem;">
-          心桥·缘梦
+      <!-- 页面标题（简化版） -->
+      <div class="fade-in-up" style="margin: 1.5rem 0; text-align: center;">
+        <h1 style="color: var(--gray-900); font-size: 1.5rem; margin: 0 0 0.25rem 0; font-weight: 500;">
+          活动列表
         </h1>
-        <p style="color: var(--gray-600); font-size: 0.9rem;">
-          同城线下相亲会
+        <p style="color: var(--gray-500); font-size: 0.8rem; margin: 0;">
+          遇见美好的TA
         </p>
       </div>
 
-      <!-- 活动分类筛选 -->
-      <div class="card fade-in-up">
-        <div class="card-header">
-          <span style="font-size: 1.2rem;">🔍</span>
-          活动筛选
+      <!-- 简化筛选器 -->
+      <div class="fade-in-up" style="margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <h3 style="font-size: 1rem; color: var(--gray-800); font-weight: 500; margin: 0;">筛选条件</h3>
+          <button @click="$router.push('/past-activities')" 
+                  style="background: var(--primary-red); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: var(--radius-md); font-size: 0.8rem; cursor: pointer; transition: all 0.2s ease;">
+            往期活动回顾 →
+          </button>
         </div>
+        
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
           <button 
-            @click="filterCategory = 'all'" 
-            :class="['btn', filterCategory === 'all' ? 'btn-primary' : 'btn-outline']"
-            style="padding: 0.5rem 1rem; font-size: 0.85rem;"
+            @click="filterStatus = 'all'" 
+            :style="{
+              padding: '0.4rem 0.8rem',
+              border: '1px solid var(--gray-200)',
+              borderRadius: 'var(--radius-md)',
+              background: filterStatus === 'all' ? 'var(--primary-red)' : 'white',
+              color: filterStatus === 'all' ? 'white' : 'var(--gray-700)',
+              fontSize: '0.8rem',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease'
+            }"
           >
-            全部活动
+            全部
           </button>
           <button 
-            @click="filterCategory = 'upcoming'" 
-            :class="['btn', filterCategory === 'upcoming' ? 'btn-primary' : 'btn-outline']"
-            style="padding: 0.5rem 1rem; font-size: 0.85rem;"
+            @click="filterStatus = 'upcoming'" 
+            :style="{
+              padding: '0.4rem 0.8rem',
+              border: '1px solid var(--gray-200)',
+              borderRadius: 'var(--radius-md)',
+              background: filterStatus === 'upcoming' ? 'var(--primary-red)' : 'white',
+              color: filterStatus === 'upcoming' ? 'white' : 'var(--gray-700)',
+              fontSize: '0.8rem',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease'
+            }"
           >
             即将开始
           </button>
           <button 
-            @click="filterCategory = 'past'" 
-            :class="['btn', filterCategory === 'past' ? 'btn-primary' : 'btn-outline']"
-            style="padding: 0.5rem 1rem; font-size: 0.85rem;"
+            @click="filterStatus = 'ongoing'" 
+            :style="{
+              padding: '0.4rem 0.8rem',
+              border: '1px solid var(--gray-200)',
+              borderRadius: 'var(--radius-md)',
+              background: filterStatus === 'ongoing' ? 'var(--primary-red)' : 'white',
+              color: filterStatus === 'ongoing' ? 'white' : 'var(--gray-700)',
+              fontSize: '0.8rem',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease'
+            }"
           >
-            往期活动
+            进行中
           </button>
         </div>
       </div>
 
-      <!-- 活动列表 -->
-      <div class="card fade-in-up">
-        <div class="card-header">
-          <span style="font-size: 1.2rem;">🎊</span>
-          活动列表
+      <!-- 简化活动列表 -->
+      <div class="fade-in-up">
+        <div v-if="loading" style="text-align: center; padding: 3rem;">
+          <div style="font-size: 2rem; margin-bottom: 1rem; color: var(--gray-400);">加载中...</div>
         </div>
         
-        <div v-if="loading" style="text-align: center; padding: 2rem;">
-          <div style="font-size: 2rem; margin-bottom: 1rem;">⏳</div>
-          <p>加载中...</p>
-        </div>
-        
-        <div v-else-if="filteredActivities.length > 0" style="display: grid; gap: 1rem;">
+        <div v-else-if="filteredActivities.length > 0" style="display: grid; gap: 0.75rem;">
           <div v-for="activity in filteredActivities" :key="activity.id" 
-               style="border: 1px solid var(--gray-200); border-radius: var(--radius-lg); padding: 1rem; background: white;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-              <h4 style="color: var(--primary-red); font-size: 1.1rem;">{{ activity.title }}</h4>
-              <span :class="['activity-status', getStatusClass(activity.date)]">
+               style="background: white; border-radius: var(--radius-lg); padding: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: all 0.2s ease;"
+               @mouseenter="$event.target.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)'"
+               @mouseleave="$event.target.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)'"
+               @click="viewActivityDetails(activity)">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+              <h4 style="color: var(--gray-800); font-size: 1rem; font-weight: 500; margin: 0;">{{ activity.title }}</h4>
+              <span :class="['activity-status', getStatusClass(activity.date)]" style="font-size: 0.7rem;">
                 {{ getStatusText(activity.date) }}
               </span>
             </div>
-            <p style="color: var(--gray-600); font-size: 0.9rem; margin-bottom: 0.75rem;">{{ activity.details }}</p>
+            <p style="color: var(--gray-600); font-size: 0.85rem; margin: 0 0 0.75rem 0; line-height: 1.4;">{{ activity.details }}</p>
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="color: var(--gray-500); font-size: 0.8rem;">
-                📅 {{ formatDate(activity.date) }}
+              <span style="color: var(--gray-500); font-size: 0.75rem;">
+                {{ formatDate(activity.date) }}
               </span>
-              <button @click="viewActivityDetails(activity)" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
-                查看详情
-              </button>
+              <span style="color: var(--primary-red); font-size: 0.75rem; font-weight: 500;">
+                查看详情 →
+              </span>
             </div>
           </div>
         </div>
         
-        <div v-else style="text-align: center; padding: 2rem;">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">🎈</div>
-          <p style="color: var(--gray-500);">暂无活动信息</p>
+        <div v-else style="text-align: center; padding: 3rem; color: var(--gray-500);">
+          <p style="font-size: 0.9rem;">暂无符合条件的活动</p>
         </div>
       </div>
 
-      <!-- 活动推荐 -->
-      <div class="card fade-in-up">
-        <div class="card-header">
-          <span style="font-size: 1.2rem;">💝</span>
-          推荐活动
-        </div>
-        <div style="background: var(--gradient-primary); color: white; padding: 1.5rem; border-radius: var(--radius-lg); text-align: center;">
-          <h4 style="margin-bottom: 0.5rem;">春季相亲大会</h4>
-          <p style="font-size: 0.9rem; margin-bottom: 1rem;">春暖花开，遇见真爱 💕</p>
-          <button class="btn" style="background: white; color: var(--primary-red);">
-            立即报名
+      <!-- 简化推荐活动 -->
+      <div class="fade-in-up" style="margin-top: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <h3 style="color: var(--gray-800); font-size: 1.1rem; font-weight: 500; margin: 0;">推荐活动</h3>
+          <button v-if="recommendedActivity" @click="viewActivityDetails(recommendedActivity)" 
+                  style="background: none; border: none; color: var(--primary-red); font-size: 0.8rem; cursor: pointer;">
+            查看全部 →
           </button>
+        </div>
+        
+        <div v-if="recommendedActivity" 
+             style="background: linear-gradient(135deg, var(--primary-red) 0%, #ff6b6b 100%); border-radius: var(--radius-lg); padding: 1.25rem; color: white; cursor: pointer; transition: all 0.2s ease;"
+             @mouseenter="$event.target.style.transform = 'translateY(-2px)'"
+             @mouseleave="$event.target.style.transform = 'translateY(0)'"
+             @click="viewActivityDetails(recommendedActivity)">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+            <h4 style="font-size: 1.1rem; font-weight: 500; margin: 0;">{{ recommendedActivity.title }}</h4>
+            <span style="background: rgba(255,255,255,0.2); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.7rem;">
+              {{ getStatusText(recommendedActivity.date) }}
+            </span>
+          </div>
+          <p style="font-size: 0.85rem; margin: 0 0 0.75rem 0; opacity: 0.9; line-height: 1.4;">{{ recommendedActivity.details }}</p>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.75rem; opacity: 0.8;">{{ formatDate(recommendedActivity.date) }}</span>
+            <span style="font-size: 0.75rem; font-weight: 500;">立即参与 →</span>
+          </div>
+        </div>
+        
+        <div v-else style="background: var(--gray-50); border-radius: var(--radius-lg); padding: 2rem; text-align: center; color: var(--gray-500);">
+          <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🎯</div>
+          <p style="font-size: 0.85rem; margin: 0;">暂无推荐活动</p>
         </div>
       </div>
     </div>
@@ -147,7 +190,7 @@ import { userService } from '../services/index.js'
 const router = useRouter()
 const activities = ref([])
 const loading = ref(true)
-const filterCategory = ref('all')
+const filterStatus = ref('all')
 const currentUser = ref(null)
 
 const fetchActivities = async () => {
@@ -161,36 +204,87 @@ const fetchActivities = async () => {
   }
 }
 
+
+
 const filteredActivities = computed(() => {
   const now = new Date()
   return activities.value.filter(activity => {
     const activityDate = new Date(activity.date)
-    switch (filterCategory.value) {
-      case 'upcoming':
-        return activityDate >= now
-      case 'past':
-        return activityDate < now
-      default:
-        return true
+    
+    // 状态筛选
+    let statusMatch = true
+    if (filterStatus.value !== 'all') {
+      const activityStatus = getActivityStatus(activityDate)
+      statusMatch = activityStatus === filterStatus.value
     }
+    
+    return statusMatch
   })
 })
+
+const recommendedActivity = computed(() => {
+  const now = new Date()
+  // 获取最近的可报名活动（状态为即将开始或正在进行）
+  const availableActivities = activities.value.filter(activity => {
+    const activityDate = new Date(activity.date)
+    const status = getActivityStatus(activityDate)
+    return status === 'upcoming' || status === 'ongoing'
+  })
+  
+  // 按日期排序，返回最近的一个
+  return availableActivities.sort((a, b) => new Date(a.date) - new Date(b.date))[0]
+})
+
+
 
 const formatDate = (dateString) => {
   const date = new Date(dateString)
   return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`
 }
 
+const getActivityStatus = (activityDate) => {
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const activityDay = new Date(activityDate.getFullYear(), activityDate.getMonth(), activityDate.getDate())
+  
+  const diffTime = activityDay - today
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+  
+  if (diffDays < 0) return 'past'
+  if (diffDays === 0) return 'ongoing'
+  return 'upcoming'
+}
+
 const getStatusClass = (dateString) => {
   const activityDate = new Date(dateString)
-  const now = new Date()
-  return activityDate >= now ? 'status-upcoming' : 'status-past'
+  const status = getActivityStatus(activityDate)
+  
+  switch (status) {
+    case 'upcoming':
+      return 'status-upcoming'
+    case 'ongoing':
+      return 'status-ongoing'
+    case 'past':
+      return 'status-past'
+    default:
+      return 'status-past'
+  }
 }
 
 const getStatusText = (dateString) => {
   const activityDate = new Date(dateString)
-  const now = new Date()
-  return activityDate >= now ? '即将开始' : '已结束'
+  const status = getActivityStatus(activityDate)
+  
+  switch (status) {
+    case 'upcoming':
+      return '即将开始'
+    case 'ongoing':
+      return '正在进行'
+    case 'past':
+      return '已结束'
+    default:
+      return '已结束'
+  }
 }
 
 const viewActivityDetails = (activity) => {
@@ -242,19 +336,27 @@ onMounted(() => {
 }
 
 .activity-status {
-  padding: 0.25rem 0.75rem;
-  border-radius: var(--radius-full);
-  font-size: 0.75rem;
-  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  font-weight: 500;
+  display: inline-block;
+  min-width: 3rem;
+  text-align: center;
 }
 
 .status-upcoming {
-  background: var(--primary-gold);
-  color: var(--gray-800);
+  background: var(--primary-red);
+  color: white;
+}
+
+.status-ongoing {
+  background: #10b981;
+  color: white;
 }
 
 .status-past {
-  background: var(--gray-200);
-  color: var(--gray-600);
+  background: var(--gray-300);
+  color: var(--gray-700);
 }
 </style>

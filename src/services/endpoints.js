@@ -35,14 +35,16 @@ export const API_ENDPOINTS = {
     USERS: {
       BASE: '/admin/users',
       RECENT: '/admin/users/recent',
-      BY_ID: (id) => `/admin/users/${id}`
+      BY_ID: (id) => `/admin/users/${id}`,
+      UPDATE_VERIFICATION: (id) => `/admin/users/${id}/verification`
     },
     ACTIVITIES: {
       BASE: '/admin/activities',
       RECENT: '/admin/activities/recent',
       CREATE: '/admin/activities/create',
       UPDATE: (id) => `/admin/activities/${id}`,
-      UPDATE_STATUS: (id) => `/admin/activities/${id}/status`
+      UPDATE_STATUS: (id) => `/admin/activities/${id}/status`,
+      REGISTRATIONS: (id) => `/admin/activities/${id}/registrations`
     }
   }
 }

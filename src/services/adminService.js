@@ -74,5 +74,23 @@ export const adminService = {
   async updateActivityStatus(activityId, status) {
     const response = await api.put(API_ENDPOINTS.ADMIN.ACTIVITIES.UPDATE_STATUS(activityId), { status })
     return response.data
+  },
+
+  // 删除用户
+  async deleteUser(userId) {
+    const response = await api.delete(API_ENDPOINTS.ADMIN.USERS.BY_ID(userId))
+    return response.data
+  },
+
+  // 更新用户验证状态
+  async updateUserVerification(userId, data) {
+    const response = await api.put(API_ENDPOINTS.ADMIN.USERS.UPDATE_VERIFICATION(userId), data)
+    return response.data
+  },
+
+  // 获取活动报名列表
+  async getActivityRegistrations(activityId) {
+    const response = await api.get(API_ENDPOINTS.ADMIN.ACTIVITIES.REGISTRATIONS(activityId))
+    return response.data
   }
 }
