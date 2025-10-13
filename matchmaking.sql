@@ -10,7 +10,7 @@
  Target Server Version : 3035005
  File Encoding         : 65001
 
- Date: 13/10/2025 13:01:18
+ Date: 13/10/2025 17:26:37
 */
 
 PRAGMA foreign_keys = false;
@@ -38,9 +38,48 @@ CREATE TABLE "activities" (
 -- ----------------------------
 -- Records of activities
 -- ----------------------------
-INSERT INTO "activities" VALUES (1, '2025-10-15', '2025-10-10 18:00:00', '秋季户外烧烤相亲会', '在美丽的郊外公园举办户外烧烤活动，让大家在轻松愉快的氛围中相识相知。活动包含烧烤、游戏互动、自我介绍等环节。', '请穿着舒适的运动装，自带水杯', 1, '2025-09-20 09:00:00', '江苏常州公园', 'outdoor_activity', 99.9, 50, '25-35岁');
-INSERT INTO "activities" VALUES (2, '2025-10-22', '2025-10-18 20:00:00', '咖啡厅浪漫邂逅', '在温馨的咖啡厅环境中，通过精心设计的交流环节，让单身男女有更多深入了解的机会。', '建议着装整洁大方', 1, '2025-09-21 14:30:00', '常州武进区咖啡厅', 'themed_party', 68.0, 30, '22-32岁');
-INSERT INTO "activities" VALUES (3, '2025-09-05', '2025-09-01 22:00:00', 'KTV欢唱交友派对', '在KTV包间内举办唱歌交友活动，通过音乐拉近彼此距离，活动包含破冰游戏、情歌对唱、自由交流等环节。', '欢迎自带拿手歌曲', 1, '2025-09-22 16:15:00', '常州新北区KTV', 'group_activity', 128.0, 40, '20-35岁');
+INSERT INTO "activities" VALUES (1, '2025-07-19', '2025-07-10 20:00:00', '爱情解密·性格测试', '在活动开始前，男嘉宾与女嘉宾们分别给出自己外貌、穿搭属性和性格属性、爱好的对应标签
+现场在无直白问答交流下率先抽签匹配
+开启两轮书店线索卡解密游戏
+两轮比赛中分别有两组嘉宾获胜
+晩餐前
+我们开启数次Speed Date
+在交流中遇见有趣的灵魂
+拉近彼此的距离
+餐前，我们进行数字抽签分配座位
+在晚餐的过程中
+再次进行不同的趣味游戏
+调动全场的热闹气氛
+让嘉宾在游戏中更深度了解彼此
+从中看到异性最真实的一面
+间接给自己和对方留下关系开始的伏笔。', '', 1, '2025-07-01 09:00:00', '常州市潞立方二楼', 'outdoor_activity', 99.9, 20, '25-35岁');
+INSERT INTO "activities" VALUES (2, '2025-08-10', '2025-08-05 20:00:00', '户外烧烤相亲会', '在美丽的郊外公园举办户外烧烤活动，让大家在轻松愉快的氛围中相知相识，活动包含烧烤、游戏互动、自我介绍等环节。', '', 1, '2025-07-20 14:30:00', '常州某公园', 'themed_party', 68.0, 30, '22-32岁');
+INSERT INTO "activities" VALUES (3, '2025-09-22', '2025-09-15 22:00:00', '咖啡厅浪漫邂逅', '在温馨的咖啡厅环境中，通过精心设计的交流环节，让单身那女友更多深入交流了解的机会。', '', 1, '2025-09-10 16:15:00', '常州某咖啡厅', 'group_activity', 128.0, 40, '20-35岁');
+INSERT INTO "activities" VALUES (4, '2025-10-05T14:00', '2025-09-30T20:00', '命理之八字姻缘——探寻传统姻缘智慧', '和陌生人一起，来场走心下午茶。
+🫂这一场，让我们撕掉社会标签，用最中式的MBTI来遇见新朋友。卸下防备，畅所欲言！
+.
+📝活动环节：
+🎈环节一：全新卡牌破冰小游戏 30mins
+通过卡牌游戏展示自己，轻松破冰，畅所欲言。也可以分享自己对爱情或八字风水的看法与体验。
+🎈环节二：专业老师分享 1-1.5hrs
+深度交流，借助五行配比知识更好地了解自己。探索中式MBTI的魅力，解锁自己的闪光点，了解最适合自己的异性性格。
+🎈环节三：休息与茶歇享用 15mins
+茶品介绍与品茶知识分享，体会申时茶的魅力。享用佐茶小食，自由聊天，和新朋友们共度休闲小食光。
+🎈环节四：趣味互动 45mins
+惊喜八字小游戏，放松愉悦心情。八字恋爱话题分享，深度有效社交。
+.
+🤗参与本次活动你将收获：
+1. 基础五行配比与八字知识
+2. 简单看相识人技巧
+3. 申时茶品鉴知识
+4. 三五兴趣相投的新朋友
+.
+📆时间：10月5日周六 2-5pm
+📍地点：常州市经开区潞立方人二楼心桥婚恋', '福利：提供特色茶饮、精致茶点；参与即可获赠“姻缘命理小解析”体验券
+ 
+报名提示
+ 
+请于9月30日前通过心桥婚恋官方渠道（微信公众号/客服电话等）确认席位，解锁专属缘分社交场域。', 1, '2025-10-13 09:21:08', '常州市潞立方二楼', 'speed_dating', 38.0, 20, '25~35岁');
 
 -- ----------------------------
 -- Table structure for activity_photos
@@ -56,11 +95,15 @@ CREATE TABLE "activity_photos" (
 -- ----------------------------
 -- Records of activity_photos
 -- ----------------------------
-INSERT INTO "activity_photos" VALUES (1, 1, '/uploads/active3.jpg');
-INSERT INTO "activity_photos" VALUES (2, 1, '/uploads/active4.jpg');
-INSERT INTO "activity_photos" VALUES (3, 2, '/uploads/active1.jpg');
-INSERT INTO "activity_photos" VALUES (4, 2, '/uploads/active6.jpg');
-INSERT INTO "activity_photos" VALUES (5, 3, '/uploads/active2.jpg');
+INSERT INTO "activity_photos" VALUES (1, 1, '/uploads/7.19-1.jpg');
+INSERT INTO "activity_photos" VALUES (2, 1, '/uploads/7.19-2.jpg');
+INSERT INTO "activity_photos" VALUES (3, 2, '/uploads/8.10-1.jpg');
+INSERT INTO "activity_photos" VALUES (4, 2, '/uploads/8.10-2.jpg');
+INSERT INTO "activity_photos" VALUES (5, 3, '/uploads/active1.jpg');
+INSERT INTO "activity_photos" VALUES (6, 4, '/uploads/10.5-1.jpg');
+INSERT INTO "activity_photos" VALUES (7, 4, '/uploads/10.5-2.jpg');
+INSERT INTO "activity_photos" VALUES (8, 4, '/uploads/10.5-3.jpg');
+INSERT INTO "activity_photos" VALUES (9, 4, '/uploads/10.5-4.jpg');
 
 -- ----------------------------
 -- Table structure for activity_registrations
@@ -101,6 +144,9 @@ CREATE TABLE "sqlite_sequence" (
 -- ----------------------------
 -- Records of sqlite_sequence
 -- ----------------------------
+INSERT INTO "sqlite_sequence" VALUES ('activities', 4);
+INSERT INTO "sqlite_sequence" VALUES ('activity_photos', 9);
+INSERT INTO "sqlite_sequence" VALUES ('activity_registrations', 7);
 INSERT INTO "sqlite_sequence" VALUES ('activities', 3);
 INSERT INTO "sqlite_sequence" VALUES ('activity_photos', 5);
 INSERT INTO "sqlite_sequence" VALUES ('user_details', 28);
@@ -218,12 +264,12 @@ INSERT INTO "users" VALUES (15, 'user_female_5', '$2b$10$7zoTMK0DtaTo4nrWUbmqUu2
 -- ----------------------------
 -- Auto increment value for activities
 -- ----------------------------
-UPDATE "sqlite_sequence" SET seq = 3 WHERE name = 'activities';
+UPDATE "sqlite_sequence" SET seq = 4 WHERE name = 'activities';
 
 -- ----------------------------
 -- Auto increment value for activity_photos
 -- ----------------------------
-UPDATE "sqlite_sequence" SET seq = 5 WHERE name = 'activity_photos';
+UPDATE "sqlite_sequence" SET seq = 9 WHERE name = 'activity_photos';
 
 -- ----------------------------
 -- Auto increment value for activity_registrations
