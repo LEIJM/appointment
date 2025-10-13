@@ -362,7 +362,9 @@ app.get('/api/activities', authenticateToken, (req, res) => {
 app.get('/api/activities/:id', authenticateToken, (req, res) => {
   const activityId = req.params.id;
   
-  db.get(`SELECT a.*, GROUP_CONCAT(ap.photo_url) as photos
+  db.get(`SELECT a.*, GROUP_CONCAT(ap.photo_url) as photos,
+          (SELECT COUNT(*) FROM activity_registrations ar WHERE ar.activity_id = a.id) as registration_count,
+          CASE WHEN datetime('now') <= datetime(a.registration_deadline) THEN 1 ELSE 0 END as can_register
           FROM activities a
           LEFT JOIN activity_photos ap ON a.id = ap.activity_id
           WHERE a.id = ? AND a.status = 1
@@ -379,7 +381,9 @@ app.get('/api/activities/:id', authenticateToken, (req, res) => {
 
 // Public activities route (no authentication required)
 app.get('/api/activities/public', (req, res) => {
-  db.all(`SELECT a.*, GROUP_CONCAT(ap.photo_url) as photos
+  db.all(`SELECT a.*, GROUP_CONCAT(ap.photo_url) as photos,
+          (SELECT COUNT(*) FROM activity_registrations ar WHERE ar.activity_id = a.id) as registration_count,
+          CASE WHEN datetime('now') <= datetime(a.registration_deadline) THEN 1 ELSE 0 END as can_register
           FROM activities a
           LEFT JOIN activity_photos ap ON a.id = ap.activity_id
           WHERE a.status = 1

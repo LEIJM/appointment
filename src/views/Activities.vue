@@ -27,10 +27,10 @@
       <!-- 页面标题 -->
       <div class="festive-bg fade-in-up" style="margin: 1rem 0; text-align: center;">
         <h1 style="color: var(--primary-red); font-size: 1.5rem; margin-bottom: 0.5rem;">
-          精彩活动
+          心桥·缘梦
         </h1>
         <p style="color: var(--gray-600); font-size: 0.9rem;">
-          参与线下活动，遇见更多可能 🎉
+          同城线下相亲会
         </p>
       </div>
 
