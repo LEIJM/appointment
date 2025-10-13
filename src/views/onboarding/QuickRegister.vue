@@ -84,6 +84,7 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { showToast, showLoadingToast, closeToast } from 'vant'
 import { useUserStore } from '../../stores/user.js'
+import { userService } from '../../services/index.js'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -162,6 +163,67 @@ const onSubmit = async () => {
       // 自动登录（更新用户状态）
       userStore.token = response.token
       userStore.user = response.user
+      
+      // 如果有onboarding数据，更新用户详情
+          if (onboardingData && Object.keys(onboardingData).length > 0) {
+            try {
+              showLoadingToast({
+                message: '保存资料中...',
+                forbidClick: true,
+                duration: 0
+              })
+              
+              // 转换onboarding数据格式以匹配后端API
+              const updateData = {}
+              
+              // 性别映射
+              // if (onboardingData.gender) {
+              //   updateData.gender = onboardingData.gender === 'male' ? '男' : '女'
+              // }
+              if (onboardingData.gender) {
+                updateData.gender = onboardingData.gender
+              }
+              
+              // 年龄直接使用
+              if (onboardingData.age) {
+                updateData.age = parseInt(onboardingData.age) || null
+              }
+              
+              // 地区直接使用
+              if (onboardingData.location) {
+                updateData.current_city = onboardingData.location
+              }
+              
+              // 学历直接使用
+              if (onboardingData.education) {
+                updateData.education = onboardingData.education
+              }
+              
+              // 收入直接使用
+              if (onboardingData.income) {
+                updateData.income = onboardingData.income
+              }
+              
+              // 婚姻状况直接使用
+              if (onboardingData.marriage) {
+                updateData.marital_status = onboardingData.marriage
+              }
+              
+              // 身高直接使用
+              if (onboardingData.height) {
+                updateData.height = parseInt(onboardingData.height) || null
+              }
+              
+              await userService.updateUserDetails(response.user.id, updateData)
+              
+              closeToast()
+              showToast('资料保存成功！')
+            } catch (updateError) {
+              console.error('Failed to save onboarding data:', updateError)
+              // 即使资料保存失败，也继续跳转，因为注册已经成功
+              showToast('注册成功，部分资料保存失败')
+            }
+          }
       
       // 清理sessionStorage
       sessionStorage.removeItem('onboardingData')

@@ -63,11 +63,11 @@ const router = useRouter()
 const selectedEducation = ref('')
 
 const educationOptions = [
-  { label: '高中及以下', value: 'high_school' },
-  { label: '大专', value: 'college' },
-  { label: '本科', value: 'bachelor' },
-  { label: '硕士', value: 'master' },
-  { label: '博士', value: 'phd' }
+  { label: '高中及以下', value: '高中及以下' },
+  { label: '大专', value: '大专' },
+  { label: '本科', value: '本科' },
+  { label: '硕士', value: '硕士' },
+  { label: '博士', value: '博士' }
 ]
 
 // 选择学历

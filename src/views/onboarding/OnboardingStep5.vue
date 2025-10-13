@@ -63,15 +63,15 @@ const router = useRouter()
 const selectedOccupation = ref('')
 
 const occupationOptions = [
-  { label: 'IT/互联网', value: 'it_internet' },
-  { label: '金融', value: 'finance' },
-  { label: '教育', value: 'education' },
-  { label: '医疗', value: 'medical' },
-  { label: '公务员', value: 'civil_servant' },
-  { label: '制造业', value: 'manufacturing' },
-  { label: '服务业', value: 'service' },
-  { label: '自由职业', value: 'freelance' },
-  { label: '其他', value: 'other' }
+  { label: 'IT/互联网', value: 'IT/互联网' },
+  { label: '金融', value: '金融' },
+  { label: '教育', value: '教育' },
+  { label: '医疗', value: '医疗' },
+  { label: '公务员', value: '公务员' },
+  { label: '制造业', value: '制造业' },
+  { label: '服务业', value: '服务业' },
+  { label: '自由职业', value: '自由职业' },
+  { label: '其他', value: '其他' }
 ]
 
 // 选择职业

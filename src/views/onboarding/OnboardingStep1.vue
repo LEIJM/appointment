@@ -83,7 +83,7 @@ const goToNextStep = () => {
   
   // 保存到sessionStorage
   const onboardingData = JSON.parse(sessionStorage.getItem('onboardingData') || '{}')
-  onboardingData.gender = selectedGender.value
+  onboardingData.gender = selectedGender.value === 'male' ? '男' : '女'
   sessionStorage.setItem('onboardingData', JSON.stringify(onboardingData))
   
   // 跳转到下一步

@@ -57,18 +57,45 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { showToast, showLoadingToast, closeToast } from 'vant'
+import { userService } from '../../services/index.js'
 
 const router = useRouter()
 
 const selectedHeight = ref('')
 
 const heightOptions = [
-  { label: '160cm以下', value: 'below_160' },
-  { label: '160-165cm', value: '160_165' },
-  { label: '166-170cm', value: '166_170' },
-  { label: '171-175cm', value: '171_175' },
-  { label: '176-180cm', value: '176_180' },
-  { label: '180cm以上', value: 'above_180' }
+  { label: '155cm', value: '155' },
+  { label: '156cm', value: '156' },
+  { label: '157cm', value: '157' },
+  { label: '158cm', value: '158' },
+  { label: '159cm', value: '159' },
+  { label: '160cm', value: '160' },
+  { label: '161cm', value: '161' },
+  { label: '162cm', value: '162' },
+  { label: '163cm', value: '163' },
+  { label: '164cm', value: '164' },
+  { label: '165cm', value: '165' },
+  { label: '166cm', value: '166' },
+  { label: '167cm', value: '167' },
+  { label: '168cm', value: '168' },
+  { label: '169cm', value: '169' },
+  { label: '170cm', value: '170' },
+  { label: '171cm', value: '171' },
+  { label: '172cm', value: '172' },
+  { label: '173cm', value: '173' },
+  { label: '174cm', value: '174' },
+  { label: '175cm', value: '175' },
+  { label: '176cm', value: '176' },
+  { label: '177cm', value: '177' },
+  { label: '178cm', value: '178' },
+  { label: '179cm', value: '179' },
+  { label: '180cm', value: '180' },
+  { label: '181cm', value: '181' },
+  { label: '182cm', value: '182' },
+  { label: '183cm', value: '183' },
+  { label: '184cm', value: '184' },
+  { label: '185cm', value: '185' }
 ]
 
 // 选择身高
@@ -87,7 +114,7 @@ const goBack = () => {
 }
 
 // 完成信息收集
-const completeOnboarding = () => {
+const completeOnboarding = async () => {
   // 保存身高信息到sessionStorage
   const onboardingData = JSON.parse(sessionStorage.getItem('onboardingData') || '{}')
   onboardingData.height = selectedHeight.value
@@ -95,10 +122,52 @@ const completeOnboarding = () => {
   
   // 检查用户是否已登录
   const token = localStorage.getItem('token')
+  const userId = localStorage.getItem('userId')
   
-  if (token) {
-    // 已登录用户，直接更新资料并返回主页
-    router.push('/')
+  if (token && userId) {
+    // 已登录用户，更新资料
+    try {
+      showLoadingToast({
+        message: '保存资料中...', 
+        forbidClick: true,
+        duration: 0
+      })
+
+      const updateData = {}
+      if (onboardingData.gender) {
+        updateData.gender = onboardingData.gender
+      }
+      if (onboardingData.age) {
+        updateData.age = parseInt(onboardingData.age) || null
+      }
+      if (onboardingData.location) {
+        updateData.current_city = onboardingData.location
+      }
+      if (onboardingData.education) {
+        updateData.education = onboardingData.education
+      }
+      if (onboardingData.income) {
+        updateData.income = onboardingData.income
+      }
+      if (onboardingData.marriage) {
+        updateData.marital_status = onboardingData.marriage
+      }
+      if (onboardingData.height) {
+        updateData.height = parseInt(onboardingData.height) || null
+      }
+
+      await userService.updateUserDetails(userId, updateData)
+      
+      closeToast()
+      showToast('资料更新成功！')
+      sessionStorage.removeItem('onboardingData')
+      router.push('/')
+    } catch (updateError) {
+      console.error('Failed to update onboarding data for logged-in user:', updateError)
+      closeToast()
+      showToast('资料更新失败，请重试')
+      router.push('/') // 即使更新失败也跳转到主页
+    }
   } else {
     // 未登录用户，跳转到快速注册页面
     router.push('/onboarding/register')

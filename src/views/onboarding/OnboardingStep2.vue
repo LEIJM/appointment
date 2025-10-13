@@ -63,11 +63,39 @@ const router = useRouter()
 const selectedAge = ref('')
 
 const ageOptions = [
-  { label: '18-25岁', value: '18-25' },
-  { label: '26-30岁', value: '26-30' },
-  { label: '31-35岁', value: '31-35' },
-  { label: '36-40岁', value: '36-40' },
-  { label: '40岁以上', value: '40+' }
+  { label: '18岁', value: '18' },
+  { label: '19岁', value: '19' },
+  { label: '20岁', value: '20' },
+  { label: '21岁', value: '21' },
+  { label: '22岁', value: '22' },
+  { label: '23岁', value: '23' },
+  { label: '24岁', value: '24' },
+  { label: '25岁', value: '25' },
+  { label: '26岁', value: '26' },
+  { label: '27岁', value: '27' },
+  { label: '28岁', value: '28' },
+  { label: '29岁', value: '29' },
+  { label: '30岁', value: '30' },
+  { label: '31岁', value: '31' },
+  { label: '32岁', value: '32' },
+  { label: '33岁', value: '33' },
+  { label: '34岁', value: '34' },
+  { label: '35岁', value: '35' },
+  { label: '36岁', value: '36' },
+  { label: '37岁', value: '37' },
+  { label: '38岁', value: '38' },
+  { label: '39岁', value: '39' },
+  { label: '40岁', value: '40' },
+  { label: '41岁', value: '41' },
+  { label: '42岁', value: '42' },
+  { label: '43岁', value: '43' },
+  { label: '44岁', value: '44' },
+  { label: '45岁', value: '45' },
+  { label: '46岁', value: '46' },
+  { label: '47岁', value: '47' },
+  { label: '48岁', value: '48' },
+  { label: '49岁', value: '49' },
+  { label: '50岁', value: '50' }
 ]
 
 // 选择年龄

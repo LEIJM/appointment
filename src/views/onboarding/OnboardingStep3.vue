@@ -63,12 +63,12 @@ const router = useRouter()
 const selectedLocation = ref('')
 
 const locationOptions = [
-  { label: '常州-武进区', value: 'wujin' },
-  { label: '常州-新北区', value: 'xinbei' },
-  { label: '常州-天宁区', value: 'tianning' },
-  { label: '常州-钟楼区', value: 'zhonglou' },
-  { label: '常州周边', value: 'zhoubian' },
-  { label: '其他', value: 'other' }
+  { label: '常州-武进区', value: '常州-武进区' },
+  { label: '常州-新北区', value: '常州-新北区' },
+  { label: '常州-天宁区', value: '常州-天宁区' },
+  { label: '常州-钟楼区', value: '常州-钟楼区' },
+  { label: '常州周边', value: '常州周边' },
+  { label: '其他', value: '其他' }
 ]
 
 // 选择地区

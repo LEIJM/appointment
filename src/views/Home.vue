@@ -69,19 +69,19 @@
           </div>
         </div>
         
-        <!-- 男孩推荐区域 -->
+        <!-- 推荐区域 - 男孩女孩交错排列 -->
         <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-200);">
-          <div v-if="maleUsers.length > 0" style="display: grid; gap: 1rem;">
-            <div v-for="user in maleUsers.slice(0, 2)" :key="user.id" 
-                 style="border: 1px solid var(--purple-200); border-radius: var(--radius-lg); padding: 1rem; background: linear-gradient(135deg, #f5f3ff, #ede9fe);">
+          <div v-if="interleavedUsers.length > 0" style="display: grid; gap: 1rem;">
+            <div v-for="(user, index) in interleavedUsers" :key="user.id" 
+                 :style="getUserCardStyle(user.gender)">
               <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
-                <div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; border: 2px solid var(--purple-300);">
+                <div :style="getAvatarStyle(user.gender)">
                   <img :src="user.avatar || '/uploads/customer.png'" :alt="user.nickname || user.username" 
                        style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <div>
-                  <h4 style="color: var(--purple-700); font-size: 1rem;">{{ user.nickname || user.username }}</h4>
-                  <p style="color: var(--purple-600); font-size: 0.8rem;">{{ user.age }}岁 · {{ user.current_city }}</p>
+                  <h4 :style="getUserNameStyle(user.gender)">{{ user.nickname || user.username }}</h4>
+                  <p :style="getUserInfoStyle(user.gender)">{{ user.age }}岁 · {{ user.current_city }}</p>
                 </div>
               </div>
               <p v-if="user.personal_introduction" 
@@ -89,59 +89,24 @@
                 {{ user.personal_introduction }}
               </p>
               <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                <span style="background: var(--purple-100); color: var(--purple-700); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.75rem;">
+                <span :style="getTagStyle(user.gender)">
                   {{ user.height }}cm
                 </span>
-                <span style="background: var(--purple-100); color: var(--purple-700); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.75rem;">
+                <span :style="getTagStyle(user.gender)">
                   {{ user.education }}
                 </span>
-                <span style="background: var(--purple-100); color: var(--purple-700); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.75rem;">
+                <span :style="getTagStyle(user.gender)">
                   {{ user.occupation }}
                 </span>
               </div>
             </div>
           </div>
-          <div v-else style="text-align: center; color: var(--gray-500); padding: 1rem;">
-            <div style="font-size: 2rem; margin-bottom: 0.5rem;">👦</div>
-            <p>暂无男孩信息</p>
-          </div>
-        </div>
-        
-        <!-- 女孩推荐区域 -->
-        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-200);">
-          <div v-if="femaleUsers.length > 0" style="display: grid; gap: 1rem;">
-            <div v-for="user in femaleUsers.slice(0, 2)" :key="user.id" 
-                 style="border: 1px solid var(--red-200); border-radius: var(--radius-lg); padding: 1rem; background: linear-gradient(135deg, #fef2f2, #fee2e2);">
-              <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
-                <div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; border: 2px solid var(--red-300);">
-                  <img :src="user.avatar || '/uploads/customer.png'" :alt="user.nickname || user.username" 
-                       style="width: 100%; height: 100%; object-fit: cover;">
-                </div>
-                <div>
-                  <h4 style="color: var(--red-700); font-size: 1rem;">{{ user.nickname || user.username }}</h4>
-                  <p style="color: var(--red-600); font-size: 0.8rem;">{{ user.age }}岁 · {{ user.current_city }}</p>
-                </div>
-              </div>
-              <p v-if="user.personal_introduction" 
-                 style="color: var(--gray-600); font-size: 0.85rem; margin-bottom: 0.5rem;">
-                {{ user.personal_introduction }}
-              </p>
-              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                <span style="background: var(--red-100); color: var(--red-700); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.75rem;">
-                  {{ user.height }}cm
-                </span>
-                <span style="background: var(--red-100); color: var(--red-700); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.75rem;">
-                  {{ user.education }}
-                </span>
-                <span style="background: var(--red-100); color: var(--red-700); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.75rem;">
-                  {{ user.occupation }}
-                </span>
-              </div>
-            </div>
+          <div v-else-if="maleUsers.length === 0 && femaleUsers.length === 0" style="text-align: center; color: var(--gray-500); padding: 2rem;">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">👥</div>
+            <p>暂无推荐信息</p>
           </div>
           <div v-else style="text-align: center; color: var(--gray-500); padding: 1rem;">
-            <div style="font-size: 2rem; margin-bottom: 0.5rem;">👧</div>
-            <p>暂无女孩信息</p>
+            <p>加载推荐信息中...</p>
           </div>
         </div>
       </div>
@@ -199,7 +164,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { activityService } from '../services/index.js'
 import { userService } from '../services/index.js'
@@ -268,6 +233,114 @@ const formatDate = (dateString) => {
   return `${date.getMonth() + 1}月${date.getDate()}日`
 }
 
+// 计算属性：交错排列的用户列表
+const interleavedUsers = computed(() => {
+  const result = []
+  const maxLength = Math.max(maleUsers.value.length, femaleUsers.value.length)
+  
+  for (let i = 0; i < maxLength; i++) {
+    if (i < maleUsers.value.length) {
+      result.push(maleUsers.value[i])
+    }
+    if (i < femaleUsers.value.length) {
+      result.push(femaleUsers.value[i])
+    }
+  }
+  
+  return result.slice(0, 10) // 限制显示10个用户（5男5女）
+})
+
+// 根据性别获取卡片样式
+const getUserCardStyle = (gender) => {
+  if (gender === '男') {
+    return {
+      border: '1px solid var(--purple-200)',
+      borderRadius: 'var(--radius-lg)',
+      padding: '1rem',
+      background: 'linear-gradient(135deg, #f5f3ff, #ede9fe)'
+    }
+  } else {
+    return {
+      border: '1px solid var(--red-200)',
+      borderRadius: 'var(--radius-lg)',
+      padding: '1rem',
+      background: 'linear-gradient(135deg, #fef2f2, #fee2e2)'
+    }
+  }
+}
+
+// 根据性别获取头像样式
+const getAvatarStyle = (gender) => {
+  if (gender === '男') {
+    return {
+      width: '50px',
+      height: '50px',
+      borderRadius: '50%',
+      overflow: 'hidden',
+      border: '2px solid var(--purple-300)'
+    }
+  } else {
+    return {
+      width: '50px',
+      height: '50px',
+      borderRadius: '50%',
+      overflow: 'hidden',
+      border: '2px solid var(--red-300)'
+    }
+  }
+}
+
+// 根据性别获取用户名样式
+const getUserNameStyle = (gender) => {
+  if (gender === '男') {
+    return {
+      color: 'var(--purple-700)',
+      fontSize: '1rem'
+    }
+  } else {
+    return {
+      color: 'var(--red-700)',
+      fontSize: '1rem'
+    }
+  }
+}
+
+// 根据性别获取用户信息样式
+const getUserInfoStyle = (gender) => {
+  if (gender === '男') {
+    return {
+      color: 'var(--purple-600)',
+      fontSize: '0.8rem'
+    }
+  } else {
+    return {
+      color: 'var(--red-600)',
+      fontSize: '0.8rem'
+    }
+  }
+}
+
+// 根据性别获取标签样式
+const getTagStyle = (gender) => {
+  if (gender === '男') {
+    return {
+      background: 'var(--purple-100)',
+      color: 'var(--purple-700)',
+      padding: '0.25rem 0.5rem',
+      borderRadius: 'var(--radius-sm)',
+      fontSize: '0.75rem'
+    }
+  } else {
+    return {
+      background: 'var(--red-100)',
+      color: 'var(--red-700)',
+      padding: '0.25rem 0.5rem',
+      borderRadius: 'var(--radius-sm)',
+      fontSize: '0.75rem'
+    }
+  }
+}
+
 const fetchCurrentUser = async () => {
   try {
     const userId = localStorage.getItem('userId')
@@ -285,12 +358,11 @@ const fetchCurrentUser = async () => {
 }
 
 onMounted(async () => {
-  await fetchActivities()
-  // 自动获取男孩和女孩推荐
-  await fetchUsersByGender('男', 2)
-  await fetchUsersByGender('女', 2)
-  // 获取当前用户信息
   await fetchCurrentUser()
+  await fetchActivities()
+  // 加载男女用户数据用于交错显示（各5个）
+  await fetchUsersByGender('男', 5)
+  await fetchUsersByGender('女', 5)
 })
 </script>
 

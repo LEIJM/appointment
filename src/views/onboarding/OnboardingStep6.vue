@@ -63,12 +63,12 @@ const router = useRouter()
 const selectedIncome = ref('')
 
 const incomeOptions = [
-  { label: '5万以下', value: 'below_5' },
-  { label: '5-10万', value: '5_10' },
-  { label: '10-20万', value: '10_20' },
-  { label: '20-30万', value: '20_30' },
-  { label: '30万以上', value: 'above_30' },
-  { label: '保密', value: 'secret' }
+  { label: '5万以下', value: '5万以下' },
+  { label: '5-10万', value: '5-10万' },
+  { label: '10-20万', value: '10-20万' },
+  { label: '20-50万', value: '20-50万' },
+  { label: '50万以上', value: '50万以上' },
+  { label: '保密', value: '保密' }
 ]
 
 // 选择收入

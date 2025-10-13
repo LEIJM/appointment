@@ -10,7 +10,7 @@
  Target Server Version : 3035005
  File Encoding         : 65001
 
- Date: 25/09/2025 15:08:40
+ Date: 13/10/2025 12:09:26
 */
 
 PRAGMA foreign_keys = false;
@@ -103,8 +103,8 @@ CREATE TABLE "sqlite_sequence" (
 -- ----------------------------
 INSERT INTO "sqlite_sequence" VALUES ('activities', 3);
 INSERT INTO "sqlite_sequence" VALUES ('activity_photos', 5);
-INSERT INTO "sqlite_sequence" VALUES ('user_details', 8);
-INSERT INTO "sqlite_sequence" VALUES ('users', 6);
+INSERT INTO "sqlite_sequence" VALUES ('user_details', 15);
+INSERT INTO "sqlite_sequence" VALUES ('users', 36);
 INSERT INTO "sqlite_sequence" VALUES ('activity_registrations', 7);
 
 -- ----------------------------
@@ -213,11 +213,11 @@ UPDATE "sqlite_sequence" SET seq = 7 WHERE name = 'activity_registrations';
 -- ----------------------------
 -- Auto increment value for user_details
 -- ----------------------------
-UPDATE "sqlite_sequence" SET seq = 8 WHERE name = 'user_details';
+UPDATE "sqlite_sequence" SET seq = 15 WHERE name = 'user_details';
 
 -- ----------------------------
 -- Auto increment value for users
 -- ----------------------------
-UPDATE "sqlite_sequence" SET seq = 6 WHERE name = 'users';
+UPDATE "sqlite_sequence" SET seq = 36 WHERE name = 'users';
 
 PRAGMA foreign_keys = true;
