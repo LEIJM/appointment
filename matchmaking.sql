@@ -1,7 +1,7 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : matchmaking_1
+ Source Server         : matchmaking
  Source Server Type    : SQLite
  Source Server Version : 3035005
  Source Schema         : main
@@ -10,7 +10,7 @@
  Target Server Version : 3035005
  File Encoding         : 65001
 
- Date: 13/10/2025 12:09:26
+ Date: 13/10/2025 13:01:18
 */
 
 PRAGMA foreign_keys = false;
@@ -103,8 +103,8 @@ CREATE TABLE "sqlite_sequence" (
 -- ----------------------------
 INSERT INTO "sqlite_sequence" VALUES ('activities', 3);
 INSERT INTO "sqlite_sequence" VALUES ('activity_photos', 5);
-INSERT INTO "sqlite_sequence" VALUES ('user_details', 15);
-INSERT INTO "sqlite_sequence" VALUES ('users', 36);
+INSERT INTO "sqlite_sequence" VALUES ('user_details', 28);
+INSERT INTO "sqlite_sequence" VALUES ('users', 49);
 INSERT INTO "sqlite_sequence" VALUES ('activity_registrations', 7);
 
 -- ----------------------------
@@ -166,10 +166,20 @@ CREATE TABLE "user_details" (
 -- ----------------------------
 -- Records of user_details
 -- ----------------------------
-INSERT INTO "user_details" VALUES (1, 2, '阳光男孩', '张三', '男', '13800138000', '北京', 28, '1997-05-15', '牛', '金牛座', 178, 70, '15-20万', '本科', '软件工程师', '互联网', 'single', '运动、音乐、旅游', 'yes', '父母退休，家庭和睦', '1-2年内', 1, 0, '河北省', '石家庄市', '桥西区', '中山路1号', '北京', '北京市', '朝阳区', '建国路88号', '性格开朗，有责任心，喜欢运动', 24, 30, 160, 170, '不限', '10万以上', '大专以上', 'single', 0, 0, '北京及周边', 1, '希望找到一位温柔善良、有共同话题的女生', '性格开朗，有责任心，喜欢运动');
-INSERT INTO "user_details" VALUES (2, 3, '甜美女孩', '李四', '女', '13900139000', '上海', 25, '2000-08-20', '龙', '狮子座', 165, 52, '10-15万', '本科', '教师', '教育', 'single', '阅读、烘焙、瑜伽', 'no', '独生女，父母公务员', '2-3年内', 0, 1, '江苏省', '南京市', '鼓楼区', '汉口路2号', '上海', '上海市', '徐汇区', '漕溪路99号', '性格温和，喜欢安静的生活', 26, 35, 175, 185, '稳定职业', '15万以上', '本科以上', 'single', 1, 1, '上海及周边', 1, '希望找到一位成熟稳重、有事业心的男生', '性格温和，喜欢安静的生活');
-INSERT INTO "user_details" VALUES (3, 4, '稳重先生', '王五', '男', '13700137000', '广州', 32, '1993-12-10', '鸡', '射手座', 182, 75, '20-30万', '硕士', '金融分析师', '金融', 'single', '投资、健身、摄影', 'no', '普通家庭，父母经商', '1年内', 1, 1, '广东省', '深圳市', '南山区', '科技园3号', '广州', '广州市', '天河区', '珠江新城188号', '事业型，追求上进', 28, 33, 165, 175, '不限', '20万以上', '本科以上', 'single', 1, 1, '广州及周边', 0, '希望找到一位理解支持我事业的伴侣', '事业型，追求上进');
-INSERT INTO "user_details" VALUES (4, 5, '优雅lady', '赵六', '女', '13600136000', '深圳', 27, '1998-03-25', '虎', '白羊座', 168, 55, '15-20万', '本科', '市场经理', '快消品', 'single', '舞蹈、美食、旅行', 'yes', '知识分子家庭', '2年内', 1, 0, '浙江省', '杭州市', '西湖区', '文三路5号', '深圳', '深圳市', '福田区', '华强北路66号', '独立自信，热爱生活', 28, 38, 175, 185, '有事业心', '20万以上', '本科以上', 'single', 1, 0, '深圳及周边', 1, '希望找到一位有品位、懂生活的绅士', '独立自信，热爱生活');
+INSERT INTO "user_details" VALUES (1, 2, '', '张三', '男', '13800138000', '北京', 28, '1997-05-15', '牛', '金牛座', 178, 70, '15-20万', '本科', '软件工程师', '互联网', 'single', '运动、音乐、旅游', 'yes', '父母退休，家庭和睦', '1-2年内', 1, 0, '河北省', '石家庄市', '桥西区', '中山路1号', '北京', '北京市', '朝阳区', '建国路88号', '性格开朗，有责任心，喜欢运动', 24, 30, 160, 170, '不限', '10万以上', '大专以上', 'single', 0, 0, '北京及周边', 1, '希望找到一位温柔善良、有共同话题的女生', '性格开朗，有责任心，喜欢运动');
+INSERT INTO "user_details" VALUES (2, 3, '', '李四', '女', '13900139000', '上海', 25, '2000-08-20', '龙', '狮子座', 165, 52, '10-15万', '本科', '教师', '教育', 'single', '阅读、烘焙、瑜伽', 'no', '独生女，父母公务员', '2-3年内', 0, 1, '江苏省', '南京市', '鼓楼区', '汉口路2号', '上海', '上海市', '徐汇区', '漕溪路99号', '性格温和，喜欢安静的生活', 26, 35, 175, 185, '稳定职业', '15万以上', '本科以上', 'single', 1, 1, '上海及周边', 1, '希望找到一位成熟稳重、有事业心的男生', '性格温和，喜欢安静的生活');
+INSERT INTO "user_details" VALUES (3, 4, '', '王五', '男', '13700137000', '广州', 32, '1993-12-10', '鸡', '射手座', 182, 75, '20-30万', '硕士', '金融分析师', '金融', 'single', '投资、健身、摄影', 'no', '普通家庭，父母经商', '1年内', 1, 1, '广东省', '深圳市', '南山区', '科技园3号', '广州', '广州市', '天河区', '珠江新城188号', '事业型，追求上进', 28, 33, 165, 175, '不限', '20万以上', '本科以上', 'single', 1, 1, '广州及周边', 0, '希望找到一位理解支持我事业的伴侣', '事业型，追求上进');
+INSERT INTO "user_details" VALUES (4, 5, '', '赵六', '女', '13600136000', '深圳', 27, '1998-03-25', '虎', '白羊座', 168, 55, '15-20万', '本科', '市场经理', '快消品', 'single', '舞蹈、美食、旅行', 'yes', '知识分子家庭', '2年内', 1, 0, '浙江省', '杭州市', '西湖区', '文三路5号', '深圳', '深圳市', '福田区', '华强北路66号', '独立自信，热爱生活', 28, 38, 175, 185, '有事业心', '20万以上', '本科以上', 'single', 1, 0, '深圳及周边', 1, '希望找到一位有品位、懂生活的绅士', '独立自信，热爱生活');
+INSERT INTO "user_details" VALUES (5, 6, '苏州影视男', NULL, '男', NULL, NULL, 32, NULL, NULL, NULL, 187, NULL, '1.3w', '专科', '影视行业', NULL, 'single', '摩托车', NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, '江苏苏州', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '江苏苏州人，32岁，专科学历，从事影视行业，月收入1.3w。爱好摩托车。');
+INSERT INTO "user_details" VALUES (6, 7, '武进护士', NULL, '女', NULL, NULL, 25, NULL, NULL, NULL, 161, NULL, '8k', '本科', '武进中医院护士', NULL, 'single', '宠物', NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, '常州武进', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '常州武进人，25岁，本科学历，从事武进中医院护士，月收入8k。爱好宠物。');
+INSERT INTO "user_details" VALUES (7, 8, '常州机械男', NULL, '男', NULL, NULL, 29, NULL, NULL, NULL, 177, NULL, '7k', '专科', '机械厂职工', NULL, 'single', '动漫', NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, '江苏常州', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '江苏常州人，29岁，专科学历，从事机械厂职工，月收入7k。爱好动漫。');
+INSERT INTO "user_details" VALUES (8, 9, '武进母婴姐', NULL, '女', NULL, NULL, 37, NULL, NULL, NULL, 160, NULL, '8k', '专科', '母婴店管理者', NULL, 'single', '做饭', NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, '常州武进', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '常州武进人，37岁，专科学历，从事母婴店管理者，月收入8k。爱好做饭。');
+INSERT INTO "user_details" VALUES (9, 10, '常州教育男', NULL, '男', NULL, NULL, 34, NULL, NULL, NULL, 168, NULL, '2w', '本科', '教育培训', NULL, 'single', '学习', NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, '江苏常州', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '江苏常州人，34岁，本科学历，从事教育培训，月收入2w。爱好学习。');
+INSERT INTO "user_details" VALUES (10, 11, '常州私营业主', NULL, '女', NULL, NULL, 34, NULL, NULL, NULL, 158, NULL, '8k', '高中', '私营业主', NULL, 'single', '宠物', NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, '江苏常州', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '江苏常州人，34岁，高中学历，从事私营业主，月收入8k。爱好宠物。');
+INSERT INTO "user_details" VALUES (11, 12, '常州管理男', NULL, '男', NULL, NULL, 34, NULL, NULL, NULL, 172, NULL, '2w', '硕士', '企业管理', NULL, 'single', '旅游', NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, '江苏常州', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '江苏常州人，34岁，硕士学历，从事企业管理，月收入2w。爱好旅游。');
+INSERT INTO "user_details" VALUES (12, 13, '武进公务员', NULL, '女', NULL, NULL, 30, NULL, NULL, NULL, 160, NULL, '2w', '硕士', '公务员', NULL, 'single', '做饭', NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, '常州武进', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '常州武进人，30岁，硕士学历，从事公务员，月收入2w。爱好做饭。');
+INSERT INTO "user_details" VALUES (13, 14, '沭阳动物园员工', NULL, '男', NULL, NULL, 32, NULL, NULL, NULL, 177, NULL, '7k', '本科', '淹城动物园员工', NULL, 'single', '摩托车', NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, '江苏沭阳', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '江苏沭阳人，32岁，本科学历，从事淹城动物园员工，月收入7k。爱好摩托车。');
+INSERT INTO "user_details" VALUES (14, 15, '宿迁电信员工', NULL, '女', NULL, NULL, 29, NULL, NULL, NULL, 162, NULL, '1.1w', '本科', '电信公司正式员工', NULL, 'single', '旅游', NULL, NULL, NULL, 0, 0, NULL, NULL, NULL, NULL, NULL, '江苏宿迁', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '江苏宿迁人，29岁，本科学历，从事电信公司正式员工，月收入1.1w。爱好旅游。');
 
 -- ----------------------------
 -- Table structure for users
@@ -194,6 +204,16 @@ INSERT INTO "users" VALUES (2, 'zhangsan', '$2b$10$F2GfhqUTgzT.YqAsYa6YXu0k8TQQb
 INSERT INTO "users" VALUES (3, 'lisi', '$2b$10$g2n3IZ3J4iRhFFI3Fpn4mOk/b2cNAPi0ePH1e53rIJ8b5kyC07Tp6', '/uploads/female.jpg', 1, 'user', '2025-09-23 11:00:00');
 INSERT INTO "users" VALUES (4, 'wangwu', '$2b$10$Uat5UfO3Htrszx1pHXq41.5bUZP4xM5EQ5mSD/nEkDCZihAwvTbjm', '/uploads/male.jpg', 1, 'user', '2025-09-23 14:20:00');
 INSERT INTO "users" VALUES (5, 'zhaoliu', '$2b$10$imWeOYRPSWjb68dGq.hvnerIXMpKuJ/OsMdLrgE3j.40LRiyY/88m', '/uploads/female.jpg', 1, 'user', '2025-09-23 15:45:00');
+INSERT INTO "users" VALUES (6, 'user_male_1', '$2b$10$NjsoJeopRvUiUHWHWqH4C.pTwyVYWq9FnllFE9pqxAI45KPVVNBrS', '/uploads/male.jpg', 1, 'user', '2025-10-13 04:52:49');
+INSERT INTO "users" VALUES (7, 'user_female_1', '$2b$10$isGFth8xgUDY77rcpIx0yOIUTOtHQlpSjmMuXlrpkP6ATWzN9w2r2', '/uploads/female.jpg', 1, 'user', '2025-10-13 04:52:50');
+INSERT INTO "users" VALUES (8, 'user_male_2', '$2b$10$pwJ3uK5XF36AGuM/QGXN2uVaA2TG7MmLH8.rQCw7E3UV8ib4rAXZS', '/uploads/male.jpg', 1, 'user', '2025-10-13 04:52:50');
+INSERT INTO "users" VALUES (9, 'user_female_2', '$2b$10$oS.fziex1KR22aREZ28OruJvsU/9SyKXGIYg82sSDKbGCpDBNBaTu', '/uploads/female.jpg', 1, 'user', '2025-10-13 04:52:50');
+INSERT INTO "users" VALUES (10, 'user_male_3', '$2b$10$sPLgJ.jH8RxwK3yW0W7H5uJK0RONNtHy96M0Lc79Lnu4RYDPLyaIy', '/uploads/male.jpg', 1, 'user', '2025-10-13 04:52:50');
+INSERT INTO "users" VALUES (11, 'user_female_3', '$2b$10$6NRXZDJIMFwguqiRI9pKveX977r/tXmsWBImGM41M8aoUg3k.GeCm', '/uploads/female.jpg', 1, 'user', '2025-10-13 04:52:50');
+INSERT INTO "users" VALUES (12, 'user_male_4', '$2b$10$caJpOApiMEGmwE0xf7VkXur8mDc5WI7ggUtT8BcaImtvYVwJapguy', '/uploads/male.jpg', 1, 'user', '2025-10-13 04:52:50');
+INSERT INTO "users" VALUES (13, 'user_female_4', '$2b$10$A1hCBdDvJe.Z6KJfLedt1eFoNWSllKC//UOHBGe.HZ3.7sUZOPf22', '/uploads/female.jpg', 1, 'user', '2025-10-13 04:52:50');
+INSERT INTO "users" VALUES (14, 'user_male_5', '$2b$10$uMgJu28UtE2T3zTuEzmdYOaANVASHqF5Bqu09/4eqTy6ikjxe5f/m', '/uploads/male.jpg', 1, 'user', '2025-10-13 04:52:50');
+INSERT INTO "users" VALUES (15, 'user_female_5', '$2b$10$7zoTMK0DtaTo4nrWUbmqUu2TpEWKvuTCDApex0gksSZ0t8EwbbDk2', '/uploads/female.jpg', 1, 'user', '2025-10-13 04:52:50');
 
 -- ----------------------------
 -- Auto increment value for activities
@@ -213,11 +233,11 @@ UPDATE "sqlite_sequence" SET seq = 7 WHERE name = 'activity_registrations';
 -- ----------------------------
 -- Auto increment value for user_details
 -- ----------------------------
-UPDATE "sqlite_sequence" SET seq = 15 WHERE name = 'user_details';
+UPDATE "sqlite_sequence" SET seq = 28 WHERE name = 'user_details';
 
 -- ----------------------------
 -- Auto increment value for users
 -- ----------------------------
-UPDATE "sqlite_sequence" SET seq = 36 WHERE name = 'users';
+UPDATE "sqlite_sequence" SET seq = 49 WHERE name = 'users';
 
 PRAGMA foreign_keys = true;
