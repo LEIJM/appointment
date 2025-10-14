@@ -157,8 +157,8 @@
         </div>
         
         <div v-else style="background: var(--gray-50); border-radius: var(--radius-lg); padding: 2rem; text-align: center; color: var(--gray-500);">
-          <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🎯</div>
-          <p style="font-size: 0.85rem; margin: 0;">暂无推荐活动</p>
+          
+          <p style="font-size: 0.85rem; margin: 0;">暂无推荐活动，敬请期待</p>
         </div>
       </div>
     </div>

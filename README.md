@@ -45,7 +45,7 @@ npm run dev
 
 应用启动后：
 - 🌐 前端地址: http://localhost:5173
-- 🔧 后端API: http://localhost:3001/api
+- 🔧 后端API: https://api.030516.xyz/api
 - 👨‍💻 管理后台: http://localhost:5173/admin
 
 ### 默认管理员账户
