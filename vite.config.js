@@ -8,6 +8,7 @@ export default defineConfig({
   envPrefix: 'VITE_',
   // 开发服务器配置
   server: {
+    allowedHosts: ['appointment-85w.pages.dev','appointment.030516.xyz','localhost','www.xinqiaocz.com','xinqiaocz.com'],
     port: 5173,
     host: '0.0.0.0',
     proxy: {
