@@ -1,9 +1,20 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 
-// https://vite.dev/config/
+// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    viteStaticCopy({
+      targets: [
+        {
+          src: 'uploads/*',
+          dest: 'uploads'
+        }
+      ]
+    })
+  ],
   // 环境变量配置
   envPrefix: 'VITE_',
   // 开发服务器配置
@@ -13,7 +24,7 @@ export default defineConfig({
     host: '0.0.0.0',
     proxy: {
       '/api': {
-        target: 'https://api.030516.xyz',
+        target: 'http://localhost:3001',
         changeOrigin: true
       }
     }
